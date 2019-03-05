@@ -18,16 +18,16 @@ const createAudioManager = function createAudioManagerFunc() {
 
     function _updateMute() {
         if (state.isAudioMuted()) {
-            muteIcon.setTexture(spriteConfig.SPEAKER_OFF.KEY);
+            muteIcon.setTexture(spriteConfig.UIELEMENTS.SPEAKER_OFF.KEY);
             scene.sound.mute = true;
         } else {
-            muteIcon.setTexture(spriteConfig.SPEAKER.KEY);
+            muteIcon.setTexture(spriteConfig.UIELEMENTS.SPEAKER.KEY);
             scene.sound.mute = false;
         }
     }
 
     function _setupMute() {
-        muteIcon = scene.add.image(1850, 1040, spriteConfig.SPEAKER.KEY);
+        muteIcon = scene.add.image(1850, 1040, spriteConfig.UIELEMENTS.SPEAKER.KEY);
         muteIcon.setScrollFactor(0);
         muteIcon.tint = gameConfig.UI_DEFAULT.tint;
         muteIcon.depth = 3;

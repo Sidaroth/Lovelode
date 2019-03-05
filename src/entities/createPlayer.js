@@ -1,5 +1,4 @@
 import isGameEntity from 'components/entities/isGameEntity';
-import pipe from 'utils/pipe';
 import canEmit from 'components/events/canEmit';
 import getFunctionUsage from 'utils/getFunctionUsage';
 import hasPosition from 'components/hasPosition';

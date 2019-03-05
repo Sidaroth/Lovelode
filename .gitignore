@@ -9,6 +9,9 @@ Thumbs.db
 # Vendors
 node_modules/
 
+# Proprietary
+assets/diggerpack
+
 # Build
 build/
 dist/

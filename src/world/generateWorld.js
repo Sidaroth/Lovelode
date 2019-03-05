@@ -1,9 +1,6 @@
 import gameConfig from 'configs/gameConfig';
 import createTile from '../entities/createTile';
-
-const calculateTileKey = function calculateTileKey(x, y) {
-    return 'Tiles/dirt00';
-};
+import calculateTileKey from './calculateTileKey';
 
 const generateWorld = function generateWorldFunc(scene) {
     const world = [];

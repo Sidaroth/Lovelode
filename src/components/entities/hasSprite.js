@@ -5,6 +5,10 @@ const hasSprite = function hasSpriteFunc(state) {
     let key = 'DEFAULT_KEY';
 
     function createSprite(kp) {
+        if (sprite) {
+            sprite.destroy();
+        }
+
         state.setKey(kp);
         sprite = new Phaser.GameObjects.Sprite(state.getParentScene(), state.getPosition().x, state.getPosition().y, key);
 

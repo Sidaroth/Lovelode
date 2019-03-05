@@ -42,7 +42,7 @@ const Game = function GameFunc() {
     };
 
     sceneInstance.create = () => {
-        background = sceneInstance.add.image(0, 0, spriteConfig.BACKGROUND.KEY);
+        background = sceneInstance.add.image(0, 0, spriteConfig.UIELEMENTS.BACKGROUND.KEY);
         background.setOrigin(0, 0);
         audioManager.playMusic();
         cameraSetup();

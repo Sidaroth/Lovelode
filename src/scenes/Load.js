@@ -11,6 +11,7 @@ const LoadScene = function LoadSceneFunc() {
     let loadingBar;
 
     function loadAudio() {
+        // NOTE Could technically be done by iterating over categories, then within each category in an inner loop too...
         // load MUSIC
         Object.keys(audioConfig.MUSIC).forEach((objKey) => {
             const AUDIO = audioConfig.MUSIC[objKey];
@@ -24,13 +25,16 @@ const LoadScene = function LoadSceneFunc() {
         });
     }
 
-    function loadSpritesheets() {}
+    function loadSpritesheets() {
+        sceneInstance.load.multiatlas(spriteConfig.DIGGERPACK.KEY, spriteConfig.DIGGERPACK.JSON_PATH, spriteConfig.DIGGERPACK.PATH);
+    }
 
     function loadMaps() {}
 
     function loadImages() {
-        Object.keys(spriteConfig).forEach((objKey) => {
-            const SPRITE = spriteConfig[objKey];
+        // Load UI elements.
+        Object.keys(spriteConfig.UIELEMENTS).forEach((objKey) => {
+            const SPRITE = spriteConfig.UIELEMENTS[objKey];
             sceneInstance.load.image(SPRITE.KEY, SPRITE.PATH);
         });
     }
