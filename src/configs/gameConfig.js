@@ -2,7 +2,7 @@ export default {
     GAME: {
         VIEWHEIGHT: 1080,
         VIEWWIDTH: 1920,
-        TITLE: 'Replace Me',
+        TITLE: 'Lovelode',
     },
     SCENES: {
         BOOT: 'game_boot',
@@ -19,8 +19,17 @@ export default {
     UI_DEFAULT: {
         tint: 0xaaaaaa,
     },
-    AUDIO: {
-        musicKeys: ['bgScore'],
-        sfxKeys: ['coinSfx'],
+    WORLD: {
+        tileWidth: 128,
+        tileHeight: 128,
+        gravity: 0.5,
+        tilesInWidth: 3,
+        tilesInHeight: 3,
+        surfaceOffset: 10,
+    },
+    COLLISION: {
+        default: 0x0001,
+        tiles: 0x0002,
+        player: 0x0003,
     },
 };

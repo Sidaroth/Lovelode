@@ -1,11 +1,9 @@
 import Phaser from 'phaser';
-import { List } from 'immutable';
 import gameConfig from 'configs/gameConfig';
 import spriteConfig from 'configs/spriteConfig';
 import AudioManager from 'core/createAudioManager';
-import createPlayer from 'entities/createPlayer';
 import UI from 'scenes/UI';
-import audioConfig from 'configs/audioConfig';
+import World from 'scenes/World';
 import getFunctionUsage from 'utils/getFunctionUsage';
 import canListen from 'components/events/canListen';
 import pipe from 'utils/pipe';
@@ -17,35 +15,17 @@ const Game = function GameFunc() {
     const state = {};
     const sceneInstance = new Phaser.Scene(gameConfig.SCENES.GAME);
     let audioManager;
-    let entities = List([]);
     let UIScene;
     let background;
+    let worldScene;
 
     function getSceneInstance() {
         return sceneInstance;
     }
 
-    function createCoin() {
-        audioManager.playSfx(audioConfig.SFX.COIN.KEY);
-    }
-
     function cameraSetup() {
         sceneInstance.cameras.main.setViewport(0, 0, gameConfig.GAME.VIEWWIDTH, gameConfig.GAME.VIEWHEIGHT);
         sceneInstance.cameras.main.setZoom(0.8);
-    }
-
-    function addEntities() {
-        const numberOfEntities = 3;
-
-        for (let i = 0; i < numberOfEntities; i += 1) {
-            entities = entities.push(createPlayer());
-        }
-
-        // Log a player entity example, same as in readme.md
-        console.log(entities.get(0));
-        entities.forEach((e) => {
-            e.printInfo();
-        });
     }
 
     sceneInstance.init = () => {
@@ -56,21 +36,22 @@ const Game = function GameFunc() {
             .setScene(UIScene)
             .setPauseOnBlur(true)
             .init();
+
+        worldScene = World();
+        sceneInstance.scene.add(gameConfig.SCENES.WORLD, worldScene.getSceneInstance(), true);
     };
 
     sceneInstance.create = () => {
         background = sceneInstance.add.image(0, 0, spriteConfig.BACKGROUND.KEY);
         background.setOrigin(0, 0);
         audioManager.playMusic();
-        createCoin();
-        addEntities();
         cameraSetup();
     };
 
     sceneInstance.update = (time, delta) => {};
 
     sceneInstance.destroy = () => {
-        if (background) sceneInstance.background.destroy();
+        if (background) background.destroy();
         if (UI) UI.destroy();
     };
 

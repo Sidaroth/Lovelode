@@ -8,10 +8,6 @@ const createPlayer = function createPlayerFunc() {
     // This is the base state, which in some cases will be an 'inherited' value, i.e Phaser.Scene
     const state = {};
 
-    function printInfo() {
-        console.log(`name: %c${state.name}`, 'color: red');
-    }
-
     const isGameEntityState = isGameEntity(state);
     const hasPositionState = hasPosition(state);
     const canEmitState = canEmit(state);
@@ -20,7 +16,6 @@ const createPlayer = function createPlayerFunc() {
         // props
         name: 'Player name',
         // methods
-        printInfo,
     };
 
     // These are the substates, or components, that describe the functionality of the resulting object.
@@ -36,10 +31,6 @@ const createPlayer = function createPlayerFunc() {
     // We compose these substates togheter through using Object.assign when returning a new Player object.
     return Object.assign(...states.map(s => s.state), {
         // pipes and overrides
-        printInfo: pipe(
-            isGameEntityState.printInfo,
-            localState.printInfo,
-        ),
     });
 };
 
