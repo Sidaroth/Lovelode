@@ -1,7 +1,7 @@
 {
-    "name": "phaser-3.14.0-boilerplate",
-    "version": "1.1.0",
-    "description": "Phaser 3.14.0 Boilerplate project for rapid development.",
+    "name": "lovelode",
+    "version": "1.0.0",
+    "description": "Motherlode inspired digger game",
     "author": "Christian Holt (Sidaroth@protonmail.com)",
     "main": "src/index.js",
     "scripts": {
@@ -13,10 +13,10 @@
     },
     "license": "MIT",
     "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
-    "homepage": "https://sidaroth.no",
+    "homepage": "https://sidaroth.no/digger",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/sidaroth/Phaser3.Boilerplate.git"
+        "url": "git+https://github.com/sidaroth/lovelode.git"
     },
     "devDependencies": {
         "@babel/core": "^7.3.4",
