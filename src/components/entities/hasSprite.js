@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import spriteConfig from 'configs/spriteConfig';
 
 const hasSprite = function hasSpriteFunc(state) {
     let sprite;
@@ -10,7 +11,13 @@ const hasSprite = function hasSpriteFunc(state) {
         }
 
         state.setKey(kp);
-        sprite = new Phaser.GameObjects.Sprite(state.getParentScene(), state.getPosition().x, state.getPosition().y, key);
+        sprite = new Phaser.GameObjects.Sprite(
+            state.getParentScene(),
+            state.getPosition().x,
+            state.getPosition().y,
+            spriteConfig.DIGGERPACK.KEY,
+            kp,
+        );
 
         state.getParentScene().add.existing(sprite);
     }

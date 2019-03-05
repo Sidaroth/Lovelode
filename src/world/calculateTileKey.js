@@ -1,5 +1,5 @@
 const calculateTileKey = function calculateTileKey(x, y) {
-    return 'Tiles/dirt00';
+    return 'dirt00.png';
 };
 
 export default calculateTileKey;

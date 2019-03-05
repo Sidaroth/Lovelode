@@ -26,7 +26,8 @@ const LoadScene = function LoadSceneFunc() {
     }
 
     function loadSpritesheets() {
-        sceneInstance.load.multiatlas(spriteConfig.DIGGERPACK.KEY, spriteConfig.DIGGERPACK.JSON_PATH, spriteConfig.DIGGERPACK.PATH);
+        sceneInstance.load.setPath('assets/diggerpack');
+        sceneInstance.load.multiatlas(spriteConfig.DIGGERPACK.KEY, spriteConfig.DIGGERPACK.JSON);
     }
 
     function loadMaps() {}

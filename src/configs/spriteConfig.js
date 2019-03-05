@@ -15,7 +15,6 @@ export default {
     },
     DIGGERPACK: {
         KEY: 'diggerpack',
-        PATH: 'assets/diggerpack',
-        JSON_PATH: 'assets/diggerpack.json',
+        JSON: 'diggerpack.json',
     },
 };

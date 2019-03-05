@@ -82,7 +82,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: '../node_modules/html-webpack-template/index.ejs',
-            title: 'Boilerplate',
+            title: 'Lovelode',
             meta: [{ name: 'robots', content: 'noindex,nofollow' }],
             appMountIds: ['content'],
             inject: false,
@@ -104,6 +104,11 @@ module.exports = {
             {
                 from: path.join(__dirname, '../assets/audio/**/*'),
                 to: path.join(PATHS.dist, 'audio/'),
+                flatten: false,
+            },
+            {
+                from: path.join(__dirname, '../assets/diggerpack/**/*'),
+                to: path.join(PATHS.dist, 'diggerpack/'),
                 flatten: false,
             },
         ]),

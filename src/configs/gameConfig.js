@@ -20,11 +20,11 @@ export default {
         tint: 0xaaaaaa,
     },
     WORLD: {
-        tileWidth: 128,
-        tileHeight: 128,
+        tileWidth: 64,
+        tileHeight: 64,
         gravity: 0.5,
-        tilesInWidth: 3,
-        tilesInHeight: 3,
+        tilesInWidth: 2,
+        tilesInHeight: 2,
         surfaceOffset: 10,
     },
     COLLISION: {

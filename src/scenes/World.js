@@ -16,7 +16,6 @@ const World = function WorldFunc() {
     }
 
     worldScene.create = () => {
-        console.log('world create');
         tileMap = generateWorld(worldScene);
         console.log(tileMap);
     };

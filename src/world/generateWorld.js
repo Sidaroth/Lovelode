@@ -8,9 +8,10 @@ const generateWorld = function generateWorldFunc(scene) {
     for (let x = 0; x < gameConfig.WORLD.tilesInWidth; x += 1) {
         for (let y = 0; y < gameConfig.WORLD.tilesInHeight; y += 1) {
             const tile = createTile();
+            const tileGap = 25;
             const pos = {
-                x: x + 1,
-                y: y + 1,
+                x: x * gameConfig.WORLD.tileWidth,
+                y: y * gameConfig.WORLD.tileHeight,
             };
 
             const tileKey = calculateTileKey(x, y);
