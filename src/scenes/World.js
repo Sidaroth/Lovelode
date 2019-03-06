@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import getFunctionUsage from 'utils/getFunctionUsage';
 import generateWorld from '../world/generateWorld';
+import store from '../store';
 
 /**
  * Layer/Scene for UI elements.
@@ -17,10 +18,13 @@ const World = function WorldFunc() {
 
     worldScene.create = () => {
         tileMap = generateWorld(worldScene);
-        console.log(tileMap);
     };
 
     worldScene.destroy = () => {};
+
+    worldScene.update = () => {
+        // update code.
+    };
 
     const localState = {
         // methods

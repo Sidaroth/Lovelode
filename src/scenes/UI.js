@@ -6,8 +6,8 @@ import getFunctionUsage from 'utils/getFunctionUsage';
 
 /**
  * Layer/Scene for UI elements.
+ * TODO: Compose
  */
-
 const UI = function UIFunc() {
     const state = new Phaser.Scene(gameConfig.SCENES.UI);
     let gui;
@@ -46,7 +46,7 @@ const UI = function UIFunc() {
     }
 
     function create() {
-        setupDatGui();
+        // setupDatGui();
         setupPerformanceStats();
     }
 

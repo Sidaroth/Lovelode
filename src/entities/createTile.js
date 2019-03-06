@@ -6,14 +6,14 @@ import hasCollision from 'components/entities/hasCollision';
 import isGameEntity from 'components/entities/isGameEntity';
 import pipe from 'utils/pipe';
 
-const createTile = function createTileFunc() {
+const createTile = function createTileFunc(scene, tilekey) {
     const state = {};
 
     // states
     const isGameEntityState = isGameEntity(state);
-    const hasParentSceneState = hasParentScene(state);
+    const hasParentSceneState = hasParentScene(state, scene);
     const hasPositionState = hasPosition(state);
-    const hasSpriteState = hasSprite(state);
+    const hasSpriteState = hasSprite(state, tilekey);
     const hasCollisionState = hasCollision(state);
 
     const localState = {};
@@ -28,8 +28,10 @@ const createTile = function createTileFunc() {
         { state: hasCollisionState, name: 'hasCollision' },
     ];
 
+    const init = pipe(...subStates.map(s => s.state.__constructor).filter(c => c));
+
     getFunctionUsage(subStates, 'createTile');
-    return Object.assign(...subStates.map(s => s.state), {
+    Object.assign(...subStates.map(s => s.state), {
         // pipes.
         setPosition: pipe(
             hasPositionState.setPosition,
@@ -37,6 +39,10 @@ const createTile = function createTileFunc() {
         ),
         destroy: hasSpriteState.destroy,
     });
+
+    init();
+
+    return state;
 };
 
 export default createTile;

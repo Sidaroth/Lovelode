@@ -7,8 +7,6 @@ const generateWorld = function generateWorldFunc(scene) {
 
     for (let x = 0; x < gameConfig.WORLD.tilesInWidth; x += 1) {
         for (let y = 0; y < gameConfig.WORLD.tilesInHeight; y += 1) {
-            const tile = createTile();
-
             // We have to offset a certain amount from top of screen (y = 0)
             const surfaceOffset = gameConfig.WORLD.tileHeight * 10;
             const xOffset = gameConfig.WORLD.tileWidth / 2;
@@ -20,10 +18,10 @@ const generateWorld = function generateWorldFunc(scene) {
             };
 
             const tileKey = calculateTileKey(x, y);
-
-            tile.setParentScene(scene);
-            tile.createSprite(tileKey);
+            const tile = createTile(scene, tileKey);
             tile.setPosition(pos);
+
+            // tile.createSprite(tileKey);
 
             world.push(tile);
         }

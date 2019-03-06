@@ -1,9 +1,15 @@
 import Phaser from 'phaser';
 import spriteConfig from 'configs/spriteConfig';
 
-const hasSprite = function hasSpriteFunc(state) {
+const hasSprite = function hasSpriteFunc(state, tileKey) {
+    if (!tileKey) throw new Error('Sprite requires a tileKey');
+
     let sprite;
-    let key = 'DEFAULT_KEY';
+    let key = tileKey;
+
+    function __constructor() {
+        state.createSprite(key);
+    }
 
     function createSprite(kp) {
         if (sprite) {
@@ -50,6 +56,7 @@ const hasSprite = function hasSpriteFunc(state) {
     }
 
     return {
+        __constructor,
         createSprite,
         getKey,
         setKey,

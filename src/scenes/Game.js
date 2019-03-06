@@ -1,12 +1,13 @@
 import Phaser from 'phaser';
 import gameConfig from 'configs/gameConfig';
-import spriteConfig from 'configs/spriteConfig';
 import AudioManager from 'core/createAudioManager';
 import UI from 'scenes/UI';
 import World from 'scenes/World';
 import getFunctionUsage from 'utils/getFunctionUsage';
 import canListen from 'components/events/canListen';
 import pipe from 'utils/pipe';
+import createPlayer from 'entities/createPlayer';
+import store from '../store';
 
 /**
  * Responsible for delegating the various levels, holding the various core systems and such.
@@ -28,21 +29,25 @@ const Game = function GameFunc() {
     }
 
     sceneInstance.init = () => {
-        // After assets are loaded.
+        // After assets are loaded. Before create.
+        worldScene = World();
+        sceneInstance.scene.add(gameConfig.SCENES.WORLD, worldScene.getSceneInstance(), true);
+
         UIScene = UI();
         sceneInstance.scene.add(gameConfig.SCENES.UI, UIScene, true);
         audioManager = AudioManager()
             .setScene(UIScene)
             .setPauseOnBlur(true)
             .init();
-
-        worldScene = World();
-        sceneInstance.scene.add(gameConfig.SCENES.WORLD, worldScene.getSceneInstance(), true);
     };
 
     sceneInstance.create = () => {
         audioManager.playMusic();
         cameraSetup();
+
+        const player = createPlayer(worldScene.getSceneInstance(), 'SideDrive/digger_side_drive02.png');
+        store.players.push(player);
+        player.setPosition({ x: gameConfig.GAME.VIEWWIDTH / 2, y: gameConfig.GAME.VIEWHEIGHT / 2 });
     };
 
     sceneInstance.update = (time, delta) => {};

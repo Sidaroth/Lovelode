@@ -19,6 +19,7 @@ const phaserConfig = {
 };
 
 store.messageBus = createMessageBus();
+store.players = [];
 const game = new Phaser.Game(phaserConfig);
 
 window.addEventListener('resize', resizeCanvas);
