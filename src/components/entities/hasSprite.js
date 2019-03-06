@@ -38,6 +38,13 @@ const hasSprite = function hasSpriteFunc(state) {
         sprite.setTexture(texture);
     }
 
+    function setPosition(pos) {
+        if (sprite) {
+            sprite.x = pos.x;
+            sprite.y = pos.y;
+        }
+    }
+
     function destroy() {
         sprite.destroy();
     }
@@ -48,6 +55,7 @@ const hasSprite = function hasSpriteFunc(state) {
         setKey,
         getSprite,
         setTexture,
+        setPosition,
         destroy,
     };
 };

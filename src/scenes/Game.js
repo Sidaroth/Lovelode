@@ -16,7 +16,6 @@ const Game = function GameFunc() {
     const sceneInstance = new Phaser.Scene(gameConfig.SCENES.GAME);
     let audioManager;
     let UIScene;
-    let background;
     let worldScene;
 
     function getSceneInstance() {
@@ -42,8 +41,6 @@ const Game = function GameFunc() {
     };
 
     sceneInstance.create = () => {
-        background = sceneInstance.add.image(0, 0, spriteConfig.UIELEMENTS.BACKGROUND.KEY);
-        background.setOrigin(0, 0);
         audioManager.playMusic();
         cameraSetup();
     };
@@ -51,7 +48,6 @@ const Game = function GameFunc() {
     sceneInstance.update = (time, delta) => {};
 
     sceneInstance.destroy = () => {
-        if (background) background.destroy();
         if (UI) UI.destroy();
     };
 

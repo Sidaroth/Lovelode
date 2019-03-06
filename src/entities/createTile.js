@@ -4,6 +4,7 @@ import hasSprite from 'components/entities/hasSprite';
 import hasParentScene from 'components/hasParentScene';
 import hasCollision from 'components/entities/hasCollision';
 import isGameEntity from 'components/entities/isGameEntity';
+import pipe from 'utils/pipe';
 
 const createTile = function createTileFunc() {
     const state = {};
@@ -30,6 +31,10 @@ const createTile = function createTileFunc() {
     getFunctionUsage(subStates, 'createTile');
     return Object.assign(...subStates.map(s => s.state), {
         // pipes.
+        setPosition: pipe(
+            hasPositionState.setPosition,
+            hasSpriteState.setPosition,
+        ),
         destroy: hasSpriteState.destroy,
     });
 };
