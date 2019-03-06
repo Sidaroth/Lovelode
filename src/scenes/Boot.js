@@ -1,34 +1,29 @@
-import Phaser from 'phaser';
 import gameConfig from 'configs/gameConfig';
 import resizeCanvas from 'utils/resizeCanvas';
 import getFunctionUsage from 'utils/getFunctionUsage';
+import isScene from './isScene';
 
-// TODO create a hasSceneInstance.js for scenes.
 const BootScene = function BootSceneFunc() {
     const state = {};
-    const sceneInstance = new Phaser.Scene(gameConfig.SCENES.BOOT);
 
-    // hook into phasers scene lifecycle.
-    sceneInstance.create = () => {
+    function create() {
         resizeCanvas();
-        sceneInstance.cameras.main.setSize(gameConfig.GAME.VIEWWIDTH, gameConfig.GAME.VIEWHEIGHT);
-        sceneInstance.scene.start(gameConfig.SCENES.LOAD);
-    };
-
-    function getSceneInstance() {
-        return sceneInstance;
+        state.getScene().cameras.main.setSize(gameConfig.GAME.VIEWWIDTH, gameConfig.GAME.VIEWHEIGHT);
+        state.getScene().scene.start(gameConfig.SCENES.LOAD);
     }
 
     const localState = {
         // methods
-        getSceneInstance,
     };
 
-    const states = [{ state, name: 'state' }, { state: localState, name: 'localState' }];
+    const isSceneState = isScene(state, gameConfig.SCENES.BOOT);
+
+    const states = [{ state, name: 'state' }, { state: localState, name: 'localState' }, { state: isSceneState, name: 'isScene' }];
 
     getFunctionUsage(states, 'Boot');
     return Object.assign(...states.map(s => s.state), {
         // pipes and overrides
+        create,
     });
 };
 

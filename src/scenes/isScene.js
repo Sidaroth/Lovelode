@@ -1,12 +1,37 @@
-const isScene = function isSceneFunc(state) {
-    const scene = null;
+import Phaser from 'phaser';
 
-    function get() {
+/**
+ * Hook into phasers scene lifecycle.
+ */
+const isScene = function isSceneFunc(state, sceneKey) {
+    const scene = new Phaser.Scene(sceneKey);
+
+    scene.create = () => {
+        if (state.create) state.create();
+    };
+
+    scene.init = () => {
+        if (state.init) state.init();
+    };
+
+    scene.update = () => {
+        if (state.update) state.update();
+    };
+
+    scene.preload = () => {
+        if (state.preload) state.preload();
+    };
+
+    scene.destroy = () => {
+        if (state.destroy) state.destroy();
+    };
+
+    function getScene() {
         return scene;
     }
 
     return {
-        get,
+        getScene,
     };
 };
 
