@@ -7,6 +7,7 @@ import createPlayer from 'entities/createPlayer';
 import store from '../store';
 import isScene from '../components/isScene';
 import createState from 'utils/createState';
+import createKeyboardInput from 'core/createKeyboardInput';
 
 /**
  * Responsible for delegating the various levels, holding the various core systems and such.
@@ -30,6 +31,9 @@ const Game = function GameFunc() {
         UIScene = UI();
         state.getScene().scene.add(gameConfig.SCENES.UI, UIScene.getScene(), true);
         audioManager = AudioManager(UIScene.getScene());
+
+        store.keyboard = createKeyboardInput();
+        store.keyboard.enable();
     }
 
     function create() {
@@ -44,6 +48,7 @@ const Game = function GameFunc() {
     function update(time, delta) {}
 
     function destroy() {
+        if (store.keyboard) store.keyboard.disable();
         if (UI) UI.destroy();
     }
 
