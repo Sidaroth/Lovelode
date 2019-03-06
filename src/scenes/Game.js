@@ -29,10 +29,7 @@ const Game = function GameFunc() {
 
         UIScene = UI();
         state.getScene().scene.add(gameConfig.SCENES.UI, UIScene.getScene(), true);
-        audioManager = AudioManager()
-            .setScene(UIScene.getScene())
-            .setPauseOnBlur(true)
-            .init();
+        audioManager = AudioManager(UIScene.getScene());
     }
 
     function create() {

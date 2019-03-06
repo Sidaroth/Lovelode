@@ -21,8 +21,6 @@ const generateWorld = function generateWorldFunc(scene) {
             const tile = createTile(scene, tileKey);
             tile.setPosition(pos);
 
-            // tile.createSprite(tileKey);
-
             world.push(tile);
         }
     }
