@@ -1,15 +1,15 @@
-import Phaser from 'phaser';
 import Stats from 'stats-js';
 import * as dat from 'dat.gui';
 import gameConfig from 'configs/gameConfig';
-import getFunctionUsage from 'utils/getFunctionUsage';
+import isScene from 'components/isScene';
+import createState from 'utils/createState';
 
 /**
  * Layer/Scene for UI elements.
- * TODO: Compose
  */
+
 const UI = function UIFunc() {
-    const state = new Phaser.Scene(gameConfig.SCENES.UI);
+    const state = {};
     let gui;
     let stats;
 
@@ -24,10 +24,10 @@ const UI = function UIFunc() {
         document.body.appendChild(stats.domElement);
 
         // TODO cleanup listeners
-        state.events.on('preupdate', () => {
+        state.getScene().events.on('preupdate', () => {
             stats.begin();
         });
-        state.events.on('postupdate', () => {
+        state.getScene().events.on('postupdate', () => {
             stats.end();
         });
     }
@@ -47,7 +47,7 @@ const UI = function UIFunc() {
 
     function create() {
         // setupDatGui();
-        setupPerformanceStats();
+        // setupPerformanceStats();
     }
 
     function destroy() {
@@ -62,11 +62,9 @@ const UI = function UIFunc() {
         destroy,
     };
 
-    const states = [{ state, name: 'state' }, { state: localState, name: 'localState' }];
-
-    getFunctionUsage(states, 'UIScene');
-    return Object.assign(...states.map(s => s.state), {
-        // pipes and overrides
+    return createState('UIScene', state, {
+        localState,
+        isScene: isScene(state, gameConfig.SCENES.UI),
     });
 };
 

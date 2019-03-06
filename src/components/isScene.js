@@ -4,7 +4,9 @@ import Phaser from 'phaser';
  * Hook into phasers scene lifecycle.
  */
 const isScene = function isSceneFunc(state, sceneKey) {
-    if (!sceneKey) throw new Error('A scene requires a scene key.');
+    if (!sceneKey) {
+        throw new Error('Missing sceneKey');
+    }
 
     const scene = new Phaser.Scene(sceneKey);
 
@@ -28,6 +30,7 @@ const isScene = function isSceneFunc(state, sceneKey) {
         if (state.destroy) state.destroy();
     };
 
+    // Used when something requires the phaser internal scene reference.
     function getScene() {
         return scene;
     }

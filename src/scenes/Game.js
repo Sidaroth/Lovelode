@@ -2,12 +2,11 @@ import gameConfig from 'configs/gameConfig';
 import AudioManager from 'core/createAudioManager';
 import UI from 'scenes/UI';
 import World from 'scenes/World';
-import getFunctionUsage from 'utils/getFunctionUsage';
 import canListen from 'components/events/canListen';
-import pipe from 'utils/pipe';
 import createPlayer from 'entities/createPlayer';
 import store from '../store';
 import isScene from '../components/isScene';
+import createState from 'utils/createState';
 
 /**
  * Responsible for delegating the various levels, holding the various core systems and such.
@@ -29,9 +28,9 @@ const Game = function GameFunc() {
         state.getScene().scene.add(gameConfig.SCENES.WORLD, worldScene.getScene(), true);
 
         UIScene = UI();
-        state.getScene().scene.add(gameConfig.SCENES.UI, UIScene, true);
+        state.getScene().scene.add(gameConfig.SCENES.UI, UIScene.getScene(), true);
         audioManager = AudioManager()
-            .setScene(UIScene)
+            .setScene(UIScene.getScene())
             .setPauseOnBlur(true)
             .init();
     }
@@ -54,27 +53,16 @@ const Game = function GameFunc() {
     const localState = {
         // props
         // methods
-    };
-
-    const canListenState = canListen(state);
-    const isSceneState = isScene(state, gameConfig.SCENES.GAME);
-    const states = [
-        { state, name: 'state' },
-        { state: localState, name: 'localState' },
-        { state: canListenState, name: 'canListen' },
-        { state: isSceneState, name: 'isScene' },
-    ];
-
-    getFunctionUsage(states, 'Game');
-    return Object.assign(...states.map(s => s.state), {
-        // pipes and overrides
         init,
         create,
         update,
-        destroy: pipe(
-            destroy,
-            canListenState.destroy,
-        ),
+        destroy,
+    };
+
+    return createState('Game', state, {
+        localState,
+        canListen: canListen(state),
+        isScene: isScene(state, gameConfig.SCENES.GAME),
     });
 };
 

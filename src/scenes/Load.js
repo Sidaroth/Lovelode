@@ -2,8 +2,8 @@ import gameConfig from 'configs/gameConfig';
 import createLoadingBar from 'core/createLoadingBar';
 import spriteConfig from 'configs/spriteConfig';
 import audioConfig from 'configs/audioConfig';
-import getFunctionUsage from 'utils/getFunctionUsage';
 import isScene from '../components/isScene';
+import createState from 'utils/createState';
 
 const LoadScene = function LoadSceneFunc() {
     const state = {};
@@ -66,17 +66,13 @@ const LoadScene = function LoadSceneFunc() {
     const localState = {
         // props
         // methods
+        preload,
+        destroy,
     };
 
-    const isSceneState = isScene(state, gameConfig.SCENES.LOAD);
-
-    const states = [{ state, name: 'state' }, { state: localState, name: 'localState' }, { state: isSceneState, name: 'isScene' }];
-
-    getFunctionUsage(states, 'LoadState');
-    return Object.assign(...states.map(s => s.state), {
-        // pipes and overrides
-        destroy,
-        preload,
+    return createState('LoadState', state, {
+        localState,
+        isScene: isScene(state, gameConfig.SCENES.LOAD),
     });
 };
 
