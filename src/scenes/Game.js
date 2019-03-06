@@ -7,7 +7,7 @@ import canListen from 'components/events/canListen';
 import pipe from 'utils/pipe';
 import createPlayer from 'entities/createPlayer';
 import store from '../store';
-import isScene from './isScene';
+import isScene from '../components/isScene';
 
 /**
  * Responsible for delegating the various levels, holding the various core systems and such.
@@ -26,7 +26,7 @@ const Game = function GameFunc() {
     function init() {
         // After assets are loaded. Before create.
         worldScene = World();
-        state.getScene().scene.add(gameConfig.SCENES.WORLD, worldScene.getSceneInstance(), true);
+        state.getScene().scene.add(gameConfig.SCENES.WORLD, worldScene.getScene(), true);
 
         UIScene = UI();
         state.getScene().scene.add(gameConfig.SCENES.UI, UIScene, true);
@@ -40,7 +40,7 @@ const Game = function GameFunc() {
         audioManager.playMusic();
         cameraSetup();
 
-        const player = createPlayer(worldScene.getSceneInstance(), 'SideDrive/digger_side_drive02.png');
+        const player = createPlayer(worldScene.getScene(), 'SideDrive/digger_side_drive02.png');
         store.players.push(player);
         player.setPosition({ x: gameConfig.GAME.VIEWWIDTH / 2, y: gameConfig.GAME.VIEWHEIGHT / 2 });
     }
@@ -49,7 +49,6 @@ const Game = function GameFunc() {
 
     function destroy() {
         if (UI) UI.destroy();
-        if (worldScene) worldScene.destroy();
     }
 
     const localState = {

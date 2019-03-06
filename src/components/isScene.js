@@ -4,6 +4,8 @@ import Phaser from 'phaser';
  * Hook into phasers scene lifecycle.
  */
 const isScene = function isSceneFunc(state, sceneKey) {
+    if (!sceneKey) throw new Error('A scene requires a scene key.');
+
     const scene = new Phaser.Scene(sceneKey);
 
     scene.create = () => {

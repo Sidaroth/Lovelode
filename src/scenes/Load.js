@@ -3,7 +3,7 @@ import createLoadingBar from 'core/createLoadingBar';
 import spriteConfig from 'configs/spriteConfig';
 import audioConfig from 'configs/audioConfig';
 import getFunctionUsage from 'utils/getFunctionUsage';
-import isScene from './isScene';
+import isScene from '../components/isScene';
 
 const LoadScene = function LoadSceneFunc() {
     const state = {};

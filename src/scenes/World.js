@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import getFunctionUsage from 'utils/getFunctionUsage';
 import generateWorld from '../world/generateWorld';
 import store from '../store';
+import isScene from '../components/isScene';
+import gameConfig from 'configs/gameConfig';
 
 /**
  * Layer/Scene for UI elements.
@@ -9,33 +11,31 @@ import store from '../store';
 
 const World = function WorldFunc() {
     const state = {};
-    const worldScene = new Phaser.Scene();
     let tileMap;
 
-    function getSceneInstance() {
-        return worldScene;
+    function create() {
+        tileMap = generateWorld(state.getScene());
     }
 
-    worldScene.create = () => {
-        tileMap = generateWorld(worldScene);
-    };
+    function destroy() {}
 
-    worldScene.destroy = () => {};
-
-    worldScene.update = () => {
+    function update() {
         // update code.
-    };
+    }
 
     const localState = {
         // methods
-        getSceneInstance,
     };
 
-    const states = [{ state, name: 'state' }, { state: localState, name: 'localState' }];
+    const isSceneState = isScene(state, gameConfig.SCENES.WORLD);
+    const states = [{ state, name: 'state' }, { state: localState, name: 'localState' }, { state: isSceneState, name: 'isScene' }];
 
     getFunctionUsage(states, 'WorldScene');
     return Object.assign(...states.map(s => s.state), {
         // pipes and overrides
+        create,
+        destroy,
+        update,
     });
 };
 

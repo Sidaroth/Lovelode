@@ -1,7 +1,7 @@
 import gameConfig from 'configs/gameConfig';
 import resizeCanvas from 'utils/resizeCanvas';
 import getFunctionUsage from 'utils/getFunctionUsage';
-import isScene from './isScene';
+import isScene from '../components/isScene';
 
 const BootScene = function BootSceneFunc() {
     const state = {};
