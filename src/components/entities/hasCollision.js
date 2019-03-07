@@ -1,11 +1,6 @@
 const hasCollision = function hasCollisionFunc(state) {
     function setupCollision() {
         const dd = state.getParentScene().matter.add.gameObject(state.sprite);
-        console.log(dd);
-    }
-
-    function setStaticStatus(value) {
-        state.getSprite().setStatic(value);
     }
 
     function setCollidesWith(objects) {
@@ -18,7 +13,6 @@ const hasCollision = function hasCollisionFunc(state) {
 
     return {
         setupCollision,
-        setStaticStatus,
         setCollidesWith,
         setCollisionCategory,
     };

@@ -16,6 +16,12 @@ const phaserConfig = {
     backgroundColor: '#555555',
     parent: 'game',
     scene: [BootScene().getScene(), LoadScene().getScene(), Game().getScene()],
+    physics: {
+        default: 'matter',
+        matter: {
+            // debug: true
+        },
+    },
 };
 
 store.messageBus = createMessageBus();

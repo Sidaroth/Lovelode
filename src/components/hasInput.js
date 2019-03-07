@@ -14,22 +14,22 @@ const hasInput = function hasInputFunc(state) {
     function _onKeyDown(event) {
         const evt = { repeat: event.repeat, direction: 'none' };
 
-        if (event.keyCode === gameConfig.KEYS.W.CODE) {
+        if (event.keyCode === gameConfig.KEYS.W.CODE || event.keyCode === gameConfig.KEYS.UP_ARROW.CODE) {
             evt.direction = 'up';
             state.emit(eventConfig.EVENTS.MOVEMENT, evt);
         }
 
-        if (event.keyCode === gameConfig.KEYS.A.CODE) {
+        if (event.keyCode === gameConfig.KEYS.A.CODE || event.keyCode === gameConfig.KEYS.LEFT_ARROW.CODE) {
             evt.direction = 'left';
             state.emit(eventConfig.EVENTS.MOVEMENT, evt);
         }
 
-        if (event.keyCode === gameConfig.KEYS.S.CODE) {
+        if (event.keyCode === gameConfig.KEYS.S.CODE || event.keyCode === gameConfig.KEYS.DOWN_ARROW.CODE) {
             evt.direction = 'down';
             state.emit(eventConfig.EVENTS.MOVEMENT, evt);
         }
 
-        if (event.keyCode === gameConfig.KEYS.D.CODE) {
+        if (event.keyCode === gameConfig.KEYS.D.CODE || event.keyCode === gameConfig.KEYS.RIGHT_ARROW.CODE) {
             evt.direction = 'right';
             state.emit(eventConfig.EVENTS.MOVEMENT, evt);
         }
@@ -37,7 +37,7 @@ const hasInput = function hasInputFunc(state) {
 
     function setInputType(type) {
         inputType = type;
-        // refresh listeners and such..
+        // TODO: Get the listener reference from listeOn() and drop it when swapping.
     }
 
     function getInputType() {
@@ -47,8 +47,7 @@ const hasInput = function hasInputFunc(state) {
     function __constructor() {
         if (!state.emit) throw new Error("hasInput requires parent to have a 'canEmit' state.");
         if (inputType === 'keyboard') {
-            const listener = state.listenOn(keyboard, eventConfig.EVENTS.KEYBOARD.KEYDOWN, _onKeyDown);
-            console.log(listener);
+            state.listenOn(keyboard, eventConfig.EVENTS.KEYBOARD.KEYDOWN, _onKeyDown);
         }
     }
 

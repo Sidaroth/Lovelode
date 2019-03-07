@@ -6,15 +6,25 @@ import isScene from '../components/isScene';
 import gameConfig from 'configs/gameConfig';
 
 /**
- * Layer/Scene for UI elements.
+ * The game world (i.e level 1)
  */
-
 const World = function WorldFunc() {
     const state = {};
     let tileMap;
 
     function create() {
         tileMap = generateWorld(state.getScene());
+
+        // Set level bounds.
+        const surfaceOffset = gameConfig.WORLD.tileHeight * 10;
+        state
+            .getScene()
+            .matter.world.setBounds(
+                0,
+                0,
+                gameConfig.WORLD.tileWidth * gameConfig.WORLD.tilesInWidth,
+                gameConfig.WORLD.tileHeight * gameConfig.WORLD.tilesInHeight + surfaceOffset,
+            );
     }
 
     function destroy() {}

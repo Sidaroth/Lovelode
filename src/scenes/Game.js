@@ -45,7 +45,9 @@ const Game = function GameFunc() {
         player.setPosition({ x: gameConfig.GAME.VIEWWIDTH / 2, y: gameConfig.GAME.VIEWHEIGHT / 2 });
     }
 
-    function update(time, delta) {}
+    function update(time, delta) {
+        store.players.forEach(player => player.update());
+    }
 
     function destroy() {
         if (store.keyboard) store.keyboard.disable();

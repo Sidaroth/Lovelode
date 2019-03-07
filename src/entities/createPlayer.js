@@ -23,8 +23,24 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const currentFuel = 100;
 
     function _onMovement(evt) {
-        if (!evt.repeat) {
+        if (true) {
             console.log(`now moving ${evt.direction}`);
+        }
+
+        if (evt.direction === 'right') {
+            state.applyForce({ x: 0.05, y: 0 });
+        }
+
+        if (evt.direction === 'left') {
+            state.applyForce({ x: -0.05, y: 0 });
+        }
+
+        if (evt.direction === 'up') {
+            state.applyForce({ x: 0, y: -0.05 });
+        }
+
+        if (evt.direction === 'down') {
+            state.applyForce({ x: 0, y: 0.05 });
         }
     }
 
