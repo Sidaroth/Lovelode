@@ -4,7 +4,7 @@ const hasPhysics = function hasPhysicsFunc(state) {
         state
             .getParentScene()
             .matter.add.gameObject(state.getSprite())
-            .setStatic(false);
+            .setStatic(true);
     }
 
     function setStaticStatus(value) {
@@ -15,11 +15,7 @@ const hasPhysics = function hasPhysicsFunc(state) {
         state.getSprite().applyForce(force);
     }
 
-    function update() {
-        // console.log(state.getPosition());
-        // const currentPos = state.getPosition();
-        // velocity.add(acceleration);
-    }
+    function update(runtime, delta) {}
 
     return {
         __constructor,

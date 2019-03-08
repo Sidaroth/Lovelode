@@ -22,25 +22,25 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const fuelCapacity = 100;
     const currentFuel = 100;
 
-    function _onMovement(evt) {
-        if (true) {
-            console.log(`now moving ${evt.direction}`);
-        }
+    const thrustForce = 0.05;
 
-        if (evt.direction === 'right') {
-            state.applyForce({ x: 0.05, y: 0 });
-        }
+    function _onMovement(direction) {
+        if (direction) {
+            if (direction.includes('Right')) {
+                state.applyForce({ x: thrustForce, y: 0 });
+            }
 
-        if (evt.direction === 'left') {
-            state.applyForce({ x: -0.05, y: 0 });
-        }
+            if (direction.includes('Left')) {
+                state.applyForce({ x: -thrustForce, y: 0 });
+            }
 
-        if (evt.direction === 'up') {
-            state.applyForce({ x: 0, y: -0.05 });
-        }
+            if (direction.includes('Up')) {
+                state.applyForce({ y: -thrustForce, x: 0 });
+            }
 
-        if (evt.direction === 'down') {
-            state.applyForce({ x: 0, y: 0.05 });
+            if (direction.includes('Down')) {
+                state.applyForce({ y: thrustForce, x: 0 });
+            }
         }
     }
 

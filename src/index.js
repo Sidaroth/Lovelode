@@ -19,7 +19,7 @@ const phaserConfig = {
     physics: {
         default: 'matter',
         matter: {
-            // debug: true
+            // debug: true,
         },
     },
 };

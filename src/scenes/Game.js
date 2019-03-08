@@ -43,10 +43,11 @@ const Game = function GameFunc() {
         const player = createPlayer(worldScene.getScene(), 'SideDrive/digger_side_drive02.png');
         store.players.push(player);
         player.setPosition({ x: gameConfig.GAME.VIEWWIDTH / 2, y: gameConfig.GAME.VIEWHEIGHT / 2 });
+        player.setStaticStatus(false);
     }
 
     function update(time, delta) {
-        store.players.forEach(player => player.update());
+        store.players.forEach(player => player.update(time, delta));
     }
 
     function destroy() {
