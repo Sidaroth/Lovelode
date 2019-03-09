@@ -14,7 +14,6 @@ import createKeyboardInput from 'core/createKeyboardInput';
  */
 const Game = function GameFunc() {
     const state = {};
-    let audioManager;
     let UIScene;
     let worldScene;
 
@@ -25,15 +24,17 @@ const Game = function GameFunc() {
 
     function init() {
         // After assets are loaded. Before create.
+        UIScene = UI();
+        state.getScene().scene.add(gameConfig.SCENES.UI, UIScene.getScene(), true);
+        AudioManager(UIScene.getScene());
+
         worldScene = World();
         state.getScene().scene.add(gameConfig.SCENES.WORLD, worldScene.getScene(), true);
 
-        UIScene = UI();
-        state.getScene().scene.add(gameConfig.SCENES.UI, UIScene.getScene(), true);
-        audioManager = AudioManager(UIScene.getScene());
-
         store.keyboard = createKeyboardInput();
         store.keyboard.enable();
+
+        state.getScene().scene.bringToTop(UIScene.getScene());
     }
 
     function create() {
@@ -54,7 +55,6 @@ const Game = function GameFunc() {
 
     function destroy() {
         if (store.keyboard) store.keyboard.disable();
-        if (UI) UI.destroy();
     }
 
     const localState = {

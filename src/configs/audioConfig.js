@@ -1,3 +1,5 @@
+import gameConfig from './gameConfig';
+
 export default {
     MUSIC: {
         BG_SCORE: {
@@ -6,4 +8,7 @@ export default {
         },
     },
     SFX: {},
+    IDENTIFIERS: {
+        MUTE: `${gameConfig.GAME.TITLE.replace(/ /g, '_')}_isMuted`, // replace all spaces with _ for safety
+    },
 };

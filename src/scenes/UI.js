@@ -3,6 +3,10 @@ import * as dat from 'dat.gui';
 import gameConfig from 'configs/gameConfig';
 import isScene from 'components/isScene';
 import createState from 'utils/createState';
+import eventConfig from 'configs/eventConfig';
+import spriteConfig from 'configs/spriteConfig';
+import canEmit from 'components/events/canEmit';
+import audioConfig from 'configs/audioConfig';
 
 /**
  * Layer/Scene for UI elements.
@@ -12,6 +16,7 @@ const UI = function UIFunc() {
     const state = {};
     let gui;
     let stats;
+    let muteIcon;
 
     function setupPerformanceStats() {
         stats = new Stats();
@@ -23,7 +28,6 @@ const UI = function UIFunc() {
 
         document.body.appendChild(stats.domElement);
 
-        // TODO cleanup listeners
         state.getScene().events.on('preupdate', () => {
             stats.begin();
         });
@@ -34,20 +38,43 @@ const UI = function UIFunc() {
 
     function setupDatGui() {
         gui = new dat.GUI();
-        gui.addFolder('Test folder');
 
         state.guiData = {
-            name: 'name',
+            volume: 70,
         };
-        const guiController = gui.add(state.guiData, 'name');
-        guiController.onFinishChange((name) => {
-            console.log(name);
+
+        gui.addFolder('Options');
+        gui.add(state.guiData, 'volume', 0, 100).onChange((v) => {
+            state.emitGlobal(eventConfig.EVENTS.SOUND.VOLUME, v / 100);
         });
     }
 
+    function getMuteIconKey() {
+        if (localStorage.getItem(audioConfig.IDENTIFIERS.MUTE) === 'true') {
+            return spriteConfig.UIELEMENTS.SPEAKER_OFF.KEY;
+        }
+        return spriteConfig.UIELEMENTS.SPEAKER.KEY;
+    }
+
+    function updateMute() {
+        state.emitGlobal(eventConfig.EVENTS.SOUND.TOGGLE_MUTE);
+        muteIcon.setTexture(getMuteIconKey());
+    }
+
+    function setupMute() {
+        const startingIcon = getMuteIconKey();
+        muteIcon = state.getScene().add.image(1850, 1040, startingIcon);
+        muteIcon.setScrollFactor(0);
+        muteIcon.tint = gameConfig.UI_DEFAULT.tint;
+        muteIcon.depth = 3;
+        muteIcon.setInteractive();
+        muteIcon.on('pointerup', updateMute, state);
+    }
+
     function create() {
-        // setupDatGui();
+        setupDatGui();
         setupPerformanceStats();
+        setupMute();
     }
 
     function destroy() {
@@ -65,6 +92,7 @@ const UI = function UIFunc() {
     return createState('UIScene', state, {
         localState,
         isScene: isScene(state, gameConfig.SCENES.UI),
+        canEmit: canEmit(state),
     });
 };
 

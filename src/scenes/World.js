@@ -1,9 +1,9 @@
-import Phaser from 'phaser';
-import getFunctionUsage from 'utils/getFunctionUsage';
 import generateWorld from '../world/generateWorld';
-import store from '../store';
 import isScene from '../components/isScene';
 import gameConfig from 'configs/gameConfig';
+import createState from 'utils/createState';
+import canEmit from 'components/events/canEmit';
+import eventConfig from 'configs/eventConfig';
 
 /**
  * The game world (i.e level 1)
@@ -25,27 +25,18 @@ const World = function WorldFunc() {
                 gameConfig.WORLD.tileWidth * gameConfig.WORLD.tilesInWidth,
                 gameConfig.WORLD.tileHeight * gameConfig.WORLD.tilesInHeight + surfaceOffset,
             );
-    }
 
-    function destroy() {}
-
-    function update() {
-        // update code.
+        state.emitGlobal(eventConfig.EVENTS.SOUND.PLAY_MUSIC);
     }
 
     const localState = {
-        // methods
+        create,
     };
 
-    const isSceneState = isScene(state, gameConfig.SCENES.WORLD);
-    const states = [{ state, name: 'state' }, { state: localState, name: 'localState' }, { state: isSceneState, name: 'isScene' }];
-
-    getFunctionUsage(states, 'WorldScene');
-    return Object.assign(...states.map(s => s.state), {
-        // pipes and overrides
-        create,
-        destroy,
-        update,
+    return createState('World', state, {
+        localState,
+        canEmit: canEmit(state),
+        isScene: isScene(state, gameConfig.SCENES.WORLD),
     });
 };
 

@@ -23,7 +23,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const currentCargoWeight = 0;
     const fuelCapacity = 100;
     const currentFuel = 100;
-    const thrustForce = 2;
+    const thrustForce = 1;
 
     function _onMovement(data) {
         const { delta, direction } = data;
