@@ -39,6 +39,7 @@ const createState = function createStateFunc(className = 'MyClass', mainState = 
     // Creates a piped init/constructor that runs each __constructor() function in the different states.
     // This allows a created class/state to have a constructor that is ran at create time.
     const init = pipe(...stateList.map(s => s.state.__constructor).filter(c => c));
+    const created = pipe(...stateList.map(s => s.state.__created).filter(c => c));
 
     Object.assign(mainState, ...stateList.map(s => s.state), pipes, overrides);
 
@@ -47,8 +48,13 @@ const createState = function createStateFunc(className = 'MyClass', mainState = 
         delete mainState.__constructor;
     }
 
+    if (mainState.__created) {
+        delete mainState.__created;
+    }
+
     // actually calls the piped init constructor from above.
     init();
+    created();
 
     return mainState;
 };

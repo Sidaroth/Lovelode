@@ -45,7 +45,8 @@ const Game = function GameFunc() {
         player.setPosition({ x: gameConfig.GAME.VIEWWIDTH / 2, y: gameConfig.GAME.VIEWHEIGHT / 2 });
         player.setStatic(false);
         player.setFixedRotation(true);
-        player.setFriction(0.01, 0.01, 0.1);
+        console.log(player);
+        player.setFriction(0.08, 0.02, 1);
     }
 
     function update(time, delta) {

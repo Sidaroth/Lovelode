@@ -49,10 +49,25 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
     }
 
     function setPosition(pos) {
-        if (sprite) {
+        if (sprite && (sprite.x !== pos.x || sprite.y !== pos.y)) {
             sprite.x = pos.x;
             sprite.y = pos.y;
         }
+
+        return pos;
+    }
+
+    function update(time) {
+        if (state.hasPhysics) {
+            // if hasPhysics has hooked into the sprite, it will affect the positions. We want state.getPosition(), state.getX() etc. to keep up with it.
+            const { x, y } = sprite;
+
+            if (x !== state.getX() || y !== state.getY()) {
+                state.setPosition({ x, y });
+            }
+        }
+
+        return time;
     }
 
     function destroy() {
@@ -69,6 +84,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
         setTexture,
         setPosition,
         destroy,
+        update,
     };
 };
 

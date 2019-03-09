@@ -1,25 +1,32 @@
 import hasPosition from 'components/hasPosition';
 import hasSprite from 'components/entities/hasSprite';
 import hasParentScene from 'components/hasParentScene';
-import hasCollision from 'components/entities/hasCollision';
 import isGameEntity from 'components/entities/isGameEntity';
 import createState from 'utils/createState';
-import hasPhysics from 'components/entities/hasPhysics';
+import hasMatterPhysics from 'components/entities/hasMatterPhysics';
+import hasSize from 'components/hasSize';
+import gameConfig from 'configs/gameConfig';
 
 const createTile = function createTileFunc(scene, tilekey) {
     const state = {};
 
+    function __created() {
+        state.setCollisionCategory(gameConfig.COLLISION.tiles);
+        state.setCollidesWith(gameConfig.COLLISION.player);
+        state.setSize({ w: gameConfig.WORLD.tileWidth, h: gameConfig.WORLD.tileHeight });
+    }
+
     // public
-    const localState = {};
+    const localState = { __created };
 
     return createState('Tile', state, {
         localState,
         isGameEntity: isGameEntity(state),
         hasParentScene: hasParentScene(state, scene),
         hasPosition: hasPosition(state),
+        hasSize: hasSize(state),
         hasSprite: hasSprite(state, tilekey),
-        hasCollision: hasCollision(state),
-        hasPhysics: hasPhysics(state),
+        hasPhysics: hasMatterPhysics(state),
     });
 };
 

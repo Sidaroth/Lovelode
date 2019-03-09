@@ -5,16 +5,26 @@ const hasPosition = function hasPositionFunc(state) {
     function setPosition(pos) {
         ({ x, y } = pos);
 
-        return { x, y };
+        return pos;
     }
 
     function getPosition() {
         return { x, y };
     }
 
+    function getX() {
+        return x;
+    }
+
+    function getY() {
+        return y;
+    }
+
     return {
         // props
         // methods
+        getX,
+        getY,
         setPosition,
         getPosition,
     };

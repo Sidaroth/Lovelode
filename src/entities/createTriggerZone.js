@@ -3,22 +3,14 @@ import hasPosition from 'components/hasPosition';
 import hasSize from 'components/hasSize';
 import isGameEntity from 'components/entities/isGameEntity';
 import createState from 'utils/createState';
+import hasParentScene from 'components/hasParentScene';
 
-const createTriggerZone = function createTriggerZoneFunc(originalScene) {
+const createTriggerZone = function createTriggerZoneFunc(parent) {
     const state = {};
 
-    let parentScene = originalScene;
-    let triggerZone = new Phaser.GameObjects.Zone(parentScene, 0, 0, 0, 0);
+    let triggerZone;
     const overlapsWith = [];
     const overlappedEntities = [];
-
-    function setScene(newScene) {
-        parentScene = newScene;
-        triggerZone.destroy();
-        const { x, y } = state.getPosition();
-
-        triggerZone = new Phaser.GameObjects.Zone(parentScene, x, y, state.getWidth(), state.getHeight());
-    }
 
     function setSize(size) {
         triggerZone.setSize(size.w, size.h);
@@ -30,28 +22,42 @@ const createTriggerZone = function createTriggerZoneFunc(originalScene) {
         return pos;
     }
 
-    function setOverlaps(bodies) {
-        overlapsWith.length = 0;
-        overlapsWith.splice(0, 0, bodies);
+    // function setOverlaps(bodies) {
+    //     overlapsWith.length = 0;
+    //     overlapsWith.splice(0, 0, bodies);
+    // }
+
+    // function addOverlapBody(body) {
+    //     overlapsWith.push(body);
+    // }
+
+    // function isOverlappedByAny() {
+    //     return overlappedEntities.length > 0;
+    // }
+
+    function drawDebugZone() {}
+
+    function __constructor() {
+        triggerZone = state.getParentScene().matter.add.rectangle(0, 0, 100, 100);
     }
 
-    function addOverlapBody(body) {
-        overlapsWith.push(body);
-    }
+    function update(time) {
+        drawDebugZone();
 
-    function isOverlappedByAny() {
-        return overlappedEntities.length > 0;
-    }
-
-    /**
-     * It should be possible to optimize state to avoid a double loop (or is it?).
-     */
-    function update() {
         const previous = overlappedEntities;
         overlappedEntities.length = 0;
-        parentScene.physics.overlap(triggerZone, overlapsWith, (zone, entity) => {
-            overlappedEntities.push(entity);
-        });
+
+        // state.getParentScene().physics.overlap(triggerZone, overlapsWith, (zone, entity) => {
+        //     overlappedEntities.push(entity);
+        // });
+
+        console.log(state.getParentScene().matter);
+
+        // overlapsWith.forEach((entity) => {
+        //     if (Phaser.Geom.Rectangle.intersection(triggerZone, entity)) {
+        //         overlappedEntities.push(entity);
+        //     }
+        // });
 
         overlappedEntities.forEach((entity) => {
             if (previous.indexOf(entity) === -1) {
@@ -65,12 +71,14 @@ const createTriggerZone = function createTriggerZoneFunc(originalScene) {
                 state.onEntityLeftRange(entity);
             }
         });
+
+        return time;
     }
 
     const localState = {
         // props
         // methods
-        setScene,
+        __constructor,
         setSize,
         setPosition,
         setOverlaps,
@@ -86,6 +94,7 @@ const createTriggerZone = function createTriggerZoneFunc(originalScene) {
         isGameEntity: isGameEntity(state),
         hasPosition: hasPosition(state),
         hasSize: hasSize(state),
+        hasParentScene: hasParentScene(state, parent),
     });
 };
 

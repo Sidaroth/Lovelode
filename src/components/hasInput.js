@@ -40,7 +40,10 @@ const hasInput = function hasInputFunc(state) {
     }
 
     return {
-        setInputType, getInputType, update, isInputDown,
+        setInputType,
+        getInputType,
+        update,
+        isInputDown,
     };
 };
 
