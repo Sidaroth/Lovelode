@@ -2,6 +2,8 @@ import gameConfig from 'configs/gameConfig';
 import spriteConfig from 'configs/spriteConfig';
 import audioConfig from 'configs/audioConfig';
 import createState from 'utils/createState';
+import eventConfig from 'configs/eventConfig';
+import canListen from 'components/events/canListen';
 
 const createAudioManager = function createAudioManagerFunc(parentScene) {
     const state = {};
@@ -9,11 +11,11 @@ const createAudioManager = function createAudioManagerFunc(parentScene) {
     let scene = parentScene;
     let muteIcon;
     let currentSong;
+    let currentVolume = 0.7;
 
     const muteIdentifier = `${gameConfig.GAME.TITLE.replace(/ /g, '_')}_isMuted`; // replace all spaces with _ for safety
     const soundEffects = new Map();
     const music = new Map();
-    const currentVolume = 0.7;
     const defaultSongKey = audioConfig.MUSIC.BG_SCORE.KEY;
 
     function _updateMute() {
@@ -26,49 +28,13 @@ const createAudioManager = function createAudioManagerFunc(parentScene) {
         }
     }
 
-    function _setupMute() {
-        muteIcon = scene.add.image(1850, 1040, spriteConfig.UIELEMENTS.SPEAKER.KEY);
-        muteIcon.setScrollFactor(0);
-        muteIcon.tint = gameConfig.UI_DEFAULT.tint;
-        muteIcon.depth = 3;
-        muteIcon.setInteractive();
-        muteIcon.on('pointerup', state.toggleMute, state);
-
-        _updateMute();
-    }
-
-    function __constructor() {
-        _setupMute();
-
-        state.setPauseOnBlur(true);
-
-        Object.keys(audioConfig.MUSIC).forEach((objKey) => {
-            const MUSIC = audioConfig.MUSIC[objKey];
-            music.set(MUSIC.KEY, scene.sound.add(MUSIC.KEY));
-        });
-
-        Object.keys(audioConfig.SFX).forEach((objKey) => {
-            const SFX = audioConfig.SFX[objKey];
-            soundEffects.set(SFX.KEY, scene.sound.add(SFX.KEY));
-        });
-    }
-
-    function setScene(newScene) {
-        // TODO move from old to new, if scene is already defined
-        scene = newScene;
-        return state;
-    }
-
-    function setPauseOnBlur(pauseOnBlur) {
-        if (scene) {
-            scene.sound.pauseOnBlur = pauseOnBlur; // Keep audio playing even when losing focus.
-        }
-        return state;
-    }
-
-    function playSfx(key) {
+    function playSfx(data) {
+        const { key, pos } = data;
         if (soundEffects.has(key)) {
-            soundEffects.get(key).play();
+            const sfx = soundEffects.get(key);
+            console.log(sfx);
+            sfx.volume = currentVolume;
+            sfx.play();
         }
     }
 
@@ -96,6 +62,67 @@ const createAudioManager = function createAudioManagerFunc(parentScene) {
         state.isMusicPlaying = false;
     }
 
+    function toggleMute() {
+        const muteStatus = (!state.isAudioMuted()).toString();
+        localStorage.setItem(muteIdentifier, muteStatus);
+        _updateMute();
+    }
+
+    function setVolume(value) {
+        currentVolume = value;
+    }
+
+    function _setupMute() {
+        muteIcon = scene.add.image(1850, 1040, spriteConfig.UIELEMENTS.SPEAKER.KEY);
+        muteIcon.setScrollFactor(0);
+        muteIcon.tint = gameConfig.UI_DEFAULT.tint;
+        muteIcon.depth = 3;
+        muteIcon.setInteractive();
+        muteIcon.on('pointerup', toggleMute, state);
+
+        _updateMute();
+    }
+
+    function _setupListeners() {
+        state.listenGlobal(eventConfig.EVENTS.SOUND.SFX, playSfx, state);
+        state.listenGlobal(eventConfig.EVENTS.SOUND.PLAY_MUSIC, playMusic, state);
+        state.listenGlobal(eventConfig.EVENTS.SOUND.PAUSE_MUSIC, pauseMusic, state);
+        state.listenGlobal(eventConfig.EVENTS.SOUND.STOP_MUSIC, stopMusic, state);
+        state.listenGlobal(eventConfig.EVENTS.SOUND.VOLUME, setVolume, state);
+        state.listenGlobal(eventConfig.EVENTS.SOUND.TOGGLE_MUTE, toggleMute, state);
+    }
+
+    function __constructor() {
+        _setupMute();
+        _setupListeners();
+
+        state.setPauseOnBlur(true);
+
+        Object.keys(audioConfig.MUSIC).forEach((objKey) => {
+            const MUSIC = audioConfig.MUSIC[objKey];
+            music.set(MUSIC.KEY, scene.sound.add(MUSIC.KEY));
+        });
+
+        Object.keys(audioConfig.SFX).forEach((objKey) => {
+            const SFX = audioConfig.SFX[objKey];
+            soundEffects.set(SFX.KEY, scene.sound.add(SFX.KEY));
+        });
+    }
+
+    // PUBLIC
+    function setScene(newScene) {
+        // TODO move from old to new, if scene is already defined
+        scene = newScene;
+        return state;
+    }
+
+    function setPauseOnBlur(pauseOnBlur) {
+        if (scene) {
+            scene.sound.pauseOnBlur = pauseOnBlur; // Keep audio playing even when losing focus.
+        }
+        return state;
+    }
+
     function getCurrentVolume() {
         return currentVolume;
     }
@@ -116,12 +143,6 @@ const createAudioManager = function createAudioManagerFunc(parentScene) {
         return localStorage.getItem(muteIdentifier) === 'true';
     }
 
-    function toggleMute() {
-        const muteStatus = (!state.isAudioMuted()).toString();
-        localStorage.setItem(muteIdentifier, muteStatus);
-        _updateMute();
-    }
-
     function destroy() {
         state.stopMusic();
         muteIcon.destroy();
@@ -134,23 +155,19 @@ const createAudioManager = function createAudioManagerFunc(parentScene) {
         isMusicPlaying: false,
         // methods
         __constructor,
-        playSfx,
         setScene,
         setPauseOnBlur,
-        playMusic,
-        pauseMusic,
-        stopMusic,
         getAudioContext,
         getCurrentSong,
         getAudioSource,
         getCurrentVolume,
         isAudioMuted,
-        toggleMute,
         destroy,
     };
 
     return createState('AudioManager', state, {
         localState,
+        canListen: canListen(state),
     });
 };
 

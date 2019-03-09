@@ -8,5 +8,12 @@ export default {
             KEYUP: 'event_keyup',
         },
         MOVEMENT: 'event_movement',
+        SOUND: {
+            SFX: 'event_sfx',
+            PLAY_MUSIC: 'event_play_music',
+            PAUSE_MUSIC: 'event_pause_music',
+            STOP_MUSIC: 'event_stop_music',
+            VOLUME: 'event_volume',
+        },
     },
 };

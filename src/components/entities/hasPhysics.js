@@ -7,21 +7,33 @@ const hasPhysics = function hasPhysicsFunc(state) {
             .setStatic(true);
     }
 
-    function setStaticStatus(value) {
+    function setStatic(value) {
         state.getSprite().setStatic(value);
+    }
+
+    function setFixedRotation(value) {
+        state.getSprite().setFixedRotation(value);
+    }
+
+    function setFriction(friction = 0, airFriction = 0, staticFriction = 0) {
+        state.getSprite().setFriction(friction, airFriction, staticFriction);
     }
 
     function applyForce(force) {
         state.getSprite().applyForce(force);
     }
 
-    function update(runtime, delta) {}
+    function update(time) {
+        return time;
+    }
 
     return {
         __constructor,
         applyForce,
         update,
-        setStaticStatus,
+        setFixedRotation,
+        setFriction,
+        setStatic,
     };
 };
 

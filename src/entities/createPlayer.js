@@ -10,6 +10,8 @@ import createState from 'utils/createState';
 import hasInput from 'components/hasInput';
 import canListen from 'components/events/canListen';
 import eventConfig from 'configs/eventConfig';
+import gameConfig from 'configs/gameConfig';
+import hasSound from 'components/hasSound';
 
 const createPlayer = function createPlayerFunc(scene, tileKey) {
     const state = {};
@@ -21,26 +23,29 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const currentCargoWeight = 0;
     const fuelCapacity = 100;
     const currentFuel = 100;
+    const thrustForce = 2;
 
-    const thrustForce = 0.05;
+    function _onMovement(data) {
+        const { delta, direction } = data;
+        const frameDelta = delta / 1000;
+        const gravity = state.getParentScene().matter.world.localWorld.gravity.y;
 
-    function _onMovement(direction) {
-        if (direction) {
-            if (direction.includes('Right')) {
-                state.applyForce({ x: thrustForce, y: 0 });
-            }
+        if (direction[gameConfig.DIRECTIONS.RIGHT]) {
+            state.applyForce({ x: thrustForce * frameDelta, y: 0 });
+            state.setFlipX(false);
+        }
 
-            if (direction.includes('Left')) {
-                state.applyForce({ x: -thrustForce, y: 0 });
-            }
+        if (direction[gameConfig.DIRECTIONS.LEFT]) {
+            state.applyForce({ x: -thrustForce * frameDelta, y: 0 });
+            state.setFlipX(true);
+        }
 
-            if (direction.includes('Up')) {
-                state.applyForce({ y: -thrustForce, x: 0 });
-            }
+        if (direction[gameConfig.DIRECTIONS.UP]) {
+            state.applyForce({ y: (-thrustForce - gravity / 2) * frameDelta, x: 0 });
+        }
 
-            if (direction.includes('Down')) {
-                state.applyForce({ y: thrustForce, x: 0 });
-            }
+        if (direction[gameConfig.DIRECTIONS.DOWN]) {
+            state.applyForce({ y: thrustForce * frameDelta, x: 0 });
         }
     }
 
@@ -68,6 +73,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         hasPhysics: hasPhysics(state),
         hasAnimation: hasAnimation(state),
         hasInput: hasInput(state),
+        hasSound: hasSound(state),
     });
 };
 

@@ -36,6 +36,10 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
         return key;
     }
 
+    function setFlipX(value) {
+        sprite.setFlipX(value);
+    }
+
     function setKey(kp) {
         key = kp;
     }
@@ -60,6 +64,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
         createSprite,
         getKey,
         setKey,
+        setFlipX,
         getSprite,
         setTexture,
         setPosition,

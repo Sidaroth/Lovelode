@@ -1,6 +1,7 @@
 import store from 'root/store';
 import keybindings from 'configs/keybindings';
 import eventConfig from 'configs/eventConfig';
+import gameConfig from 'configs/gameConfig';
 
 /**
  * The idea here is to allow inputs of various types to be abstracted away.
@@ -13,7 +14,6 @@ const hasInput = function hasInputFunc(state) {
 
     function setInputType(type) {
         inputType = type;
-        // TODO: Get the listener reference from listeOn() and drop it when swapping.
     }
 
     function getInputType() {
@@ -24,20 +24,24 @@ const hasInput = function hasInputFunc(state) {
         return bindings.some(binding => keyboard.isKeyDown(binding));
     }
 
-    function update() {
+    function update(time) {
         // into hasMovement.js component?
-        const leftInput = isInputDown(...keybindings.MOVEMENT.LEFT) ? 'Left' : '';
-        const upInput = isInputDown(...keybindings.MOVEMENT.UP) ? 'Up' : '';
-        const rightInput = isInputDown(...keybindings.MOVEMENT.RIGHT) ? 'Right' : '';
-        const downInput = isInputDown(...keybindings.MOVEMENT.DOWN) ? 'Down' : '';
-        const direction = leftInput + upInput + rightInput + downInput;
+        const direction = [false, false, false, false];
+        direction[gameConfig.DIRECTIONS.LEFT] = isInputDown(...keybindings.MOVEMENT.LEFT);
+        direction[gameConfig.DIRECTIONS.UP] = isInputDown(...keybindings.MOVEMENT.UP);
+        direction[gameConfig.DIRECTIONS.RIGHT] = isInputDown(...keybindings.MOVEMENT.RIGHT);
+        direction[gameConfig.DIRECTIONS.DOWN] = isInputDown(...keybindings.MOVEMENT.DOWN);
 
-        if (direction) {
-            state.emit(eventConfig.EVENTS.MOVEMENT, direction);
+        if (direction.some(dir => dir)) {
+            state.emit(eventConfig.EVENTS.MOVEMENT, { direction, delta: time.delta });
         }
+
+        return time.delta;
     }
 
-    return { setInputType, getInputType, update };
+    return {
+        setInputType, getInputType, update, isInputDown,
+    };
 };
 
 export default hasInput;
