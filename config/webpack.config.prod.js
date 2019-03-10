@@ -107,8 +107,8 @@ module.exports = {
                 flatten: false,
             },
             {
-                from: path.join(__dirname, '../assets/diggerpack/**/*'),
-                to: path.join(PATHS.dist, 'diggerpack/'),
+                from: path.join(__dirname, '../assets/proprietary/**/*'),
+                to: path.join(PATHS.dist, 'proprietary/'),
                 flatten: false,
             },
         ]),

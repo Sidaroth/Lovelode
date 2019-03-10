@@ -10,9 +10,9 @@ Thumbs.db
 node_modules/
 
 # Proprietary
-assets/diggerpack/*.json
-assets/diggerpack/*.png
-assets/diggerpack/*.jpg
+assets/proprietary/*.json
+assets/proprietary/*.png
+assets/proprietary/*.jpg
 
 # Build
 build/

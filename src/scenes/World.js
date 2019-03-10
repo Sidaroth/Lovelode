@@ -15,6 +15,7 @@ const World = function WorldFunc() {
     function cameraSetup() {
         const camera = state.getScene().cameras.main;
         camera.setViewport(0, 0, gameConfig.GAME.VIEWWIDTH, gameConfig.GAME.VIEWHEIGHT);
+        camera.removeBounds();
         camera.setZoom(1);
     }
 
@@ -37,8 +38,11 @@ const World = function WorldFunc() {
         cameraSetup();
     }
 
+    function update(time, delta) {}
+
     const localState = {
         create,
+        update,
     };
 
     return createState('World', state, {
