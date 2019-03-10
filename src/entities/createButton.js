@@ -24,7 +24,7 @@ const createButton = function createButtonFunc(parent) {
     }
 
     function onClick(e) {
-        state.emit(eventConfig.EVENTS.BUTTON.CLICK, e);
+        state.emit(eventConfig.BUTTON.CLICK, e);
     }
 
     function refresh() {

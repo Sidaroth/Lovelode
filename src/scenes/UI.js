@@ -45,7 +45,7 @@ const UI = function UIFunc() {
 
         gui.addFolder('Options');
         gui.add(state.guiData, 'volume', 0, 100).onChange((v) => {
-            state.emitGlobal(eventConfig.EVENTS.SOUND.VOLUME, v / 100);
+            state.emitGlobal(eventConfig.SOUND.VOLUME, v / 100);
         });
     }
 
@@ -57,7 +57,7 @@ const UI = function UIFunc() {
     }
 
     function updateMute() {
-        state.emitGlobal(eventConfig.EVENTS.SOUND.TOGGLE_MUTE);
+        state.emitGlobal(eventConfig.SOUND.TOGGLE_MUTE);
         muteIcon.setTexture(getMuteIconKey());
     }
 

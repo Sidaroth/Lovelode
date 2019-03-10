@@ -17,11 +17,6 @@ const Game = function GameFunc() {
     let UIScene;
     let worldScene;
 
-    function cameraSetup() {
-        state.getScene().cameras.main.setViewport(0, 0, gameConfig.GAME.VIEWWIDTH, gameConfig.GAME.VIEWHEIGHT);
-        state.getScene().cameras.main.setZoom(0.8);
-    }
-
     function init() {
         // After assets are loaded. Before create.
         UIScene = UI();
@@ -34,19 +29,14 @@ const Game = function GameFunc() {
         store.keyboard = createKeyboardInput();
         store.keyboard.enable();
 
-        state.getScene().scene.bringToTop(UIScene.getScene());
+        state.getScene().scene.bringToTop(UIScene.getScene()); // make sure UI elements are always displayed above any other scenes.
     }
 
     function create() {
-        cameraSetup();
+        store.players.push(createPlayer(worldScene.getScene(), 'SideDrive/digger_side_drive02.png'));
+        worldScene.getScene().cameras.main.startFollow(store.players[0].getSprite(), true, 0.5, 0.5);
 
-        const player = createPlayer(worldScene.getScene(), 'SideDrive/digger_side_drive02.png');
-        store.players.push(player);
-        player.setPosition({ x: gameConfig.GAME.VIEWWIDTH / 2, y: gameConfig.GAME.VIEWHEIGHT / 2 });
-        player.setStatic(false);
-        player.setFixedRotation(true);
-        console.log(player);
-        player.setFriction(0.08, 0.02, 1);
+        console.log(`Player 1 ID: ${store.players[0].id}`);
     }
 
     function update(time, delta) {

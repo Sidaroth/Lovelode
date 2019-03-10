@@ -12,6 +12,12 @@ const World = function WorldFunc() {
     const state = {};
     let tileMap;
 
+    function cameraSetup() {
+        const camera = state.getScene().cameras.main;
+        camera.setViewport(0, 0, gameConfig.GAME.VIEWWIDTH, gameConfig.GAME.VIEWHEIGHT);
+        camera.setZoom(1);
+    }
+
     function create() {
         tileMap = generateWorld(state.getScene());
 
@@ -21,12 +27,14 @@ const World = function WorldFunc() {
             .getScene()
             .matter.world.setBounds(
                 0,
-                0,
+                -surfaceOffset,
                 gameConfig.WORLD.tileWidth * gameConfig.WORLD.tilesInWidth,
                 gameConfig.WORLD.tileHeight * gameConfig.WORLD.tilesInHeight + surfaceOffset,
             );
 
-        state.emitGlobal(eventConfig.EVENTS.SOUND.PLAY_MUSIC);
+        state.emitGlobal(eventConfig.SOUND.PLAY_MUSIC);
+
+        cameraSetup();
     }
 
     const localState = {

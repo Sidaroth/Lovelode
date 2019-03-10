@@ -33,7 +33,7 @@ const hasInput = function hasInputFunc(state) {
         direction[gameConfig.DIRECTIONS.DOWN] = isInputDown(...keybindings.MOVEMENT.DOWN);
 
         if (direction.some(dir => dir)) {
-            state.emit(eventConfig.EVENTS.MOVEMENT, { direction, delta: time.delta });
+            state.emit(eventConfig.MOVEMENT, { direction, delta: time.delta });
         }
 
         return time.delta;

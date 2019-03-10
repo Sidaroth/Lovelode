@@ -11,20 +11,21 @@ import canListen from 'components/events/canListen';
 import eventConfig from 'configs/eventConfig';
 import gameConfig from 'configs/gameConfig';
 import hasSound from 'components/hasSound';
-import createTriggerZone from './createTriggerZone';
 
 const createPlayer = function createPlayerFunc(scene, tileKey) {
     const state = {};
 
     // private
-    let drillZone;
     const hullMax = 100;
-    const hullCurrent = 100;
+    let hullCurrent = 100;
     const cargoCapacity = 100;
     const currentCargoWeight = 0;
     const fuelCapacity = 100;
     const currentFuel = 100;
     const thrustForce = 1;
+    const damageThresholdOnCrash = 10;
+
+    let damageTakenThisFrame = false; // because we can collide with multiple times simultaneously, we don't want to multiply the damage taken.
 
     function _onMovement(data) {
         const { delta, direction } = data;
@@ -50,18 +51,40 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         }
     }
 
+    function damage(value) {
+        console.log('Ouch!', value);
+        damageTakenThisFrame = true;
+        hullCurrent += value;
+    }
+
+    function onCollisionStart(event) {
+        if (event.collision.depth > damageThresholdOnCrash && !damageTakenThisFrame) {
+            const modifier = event.collision.depth / damageThresholdOnCrash;
+            damage(Math.round(10 * modifier));
+        }
+    }
+
+    function onCollisionEnd(event) {}
+
     function update(time) {
+        damageTakenThisFrame = false;
         return time;
     }
 
     function setupListeners() {
-        state.listenOn(state, eventConfig.EVENTS.MOVEMENT, _onMovement, state);
+        state.listenOn(state, eventConfig.MOVEMENT, _onMovement);
+        state.listenOn(state, eventConfig.COLLISION.START, onCollisionStart);
+        state.listenOn(state, eventConfig.COLLISION.END, onCollisionEnd);
     }
 
     function __created() {
         setupListeners();
         state.setCollisionCategory(gameConfig.COLLISION.player);
-        state.setCollidesWith(gameConfig.COLLISION.tiles);
+        state.setCollidesWith([gameConfig.COLLISION.tiles, gameConfig.COLLISION.default]);
+        state.setPosition({ x: gameConfig.GAME.VIEWWIDTH / 2, y: gameConfig.GAME.VIEWHEIGHT / 2 });
+        state.setStatic(false);
+        state.setFixedRotation(true);
+        state.setFriction(0.08, 0.02, 1);
     }
 
     // Public

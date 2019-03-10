@@ -67,12 +67,12 @@ const createAudioManager = function createAudioManagerFunc(scene) {
     }
 
     function _setupListeners() {
-        state.listenGlobal(eventConfig.EVENTS.SOUND.SFX, _playSfx, state);
-        state.listenGlobal(eventConfig.EVENTS.SOUND.PLAY_MUSIC, _playMusic, state);
-        state.listenGlobal(eventConfig.EVENTS.SOUND.PAUSE_MUSIC, _pauseMusic, state);
-        state.listenGlobal(eventConfig.EVENTS.SOUND.STOP_MUSIC, _stopMusic, state);
-        state.listenGlobal(eventConfig.EVENTS.SOUND.VOLUME, _setVolume, state);
-        state.listenGlobal(eventConfig.EVENTS.SOUND.TOGGLE_MUTE, _toggleMute, state);
+        state.listenGlobal(eventConfig.SOUND.SFX, _playSfx, state);
+        state.listenGlobal(eventConfig.SOUND.PLAY_MUSIC, _playMusic, state);
+        state.listenGlobal(eventConfig.SOUND.PAUSE_MUSIC, _pauseMusic, state);
+        state.listenGlobal(eventConfig.SOUND.STOP_MUSIC, _stopMusic, state);
+        state.listenGlobal(eventConfig.SOUND.VOLUME, _setVolume, state);
+        state.listenGlobal(eventConfig.SOUND.TOGGLE_MUTE, _toggleMute, state);
     }
 
     function __constructor() {
