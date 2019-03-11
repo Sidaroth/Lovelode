@@ -11,7 +11,6 @@ import canListen from 'components/events/canListen';
 import eventConfig from 'configs/eventConfig';
 import gameConfig from 'configs/gameConfig';
 import hasSound from 'components/hasSound';
-import Phaser from 'phaser';
 
 const createPlayer = function createPlayerFunc(scene, tileKey) {
     const state = {};
@@ -125,9 +124,6 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
 
     function update(time) {
         damageTakenThisFrame = false;
-        dbgGfx.x = state.getX();
-        dbgGfx.y = state.getY();
-
         return time;
     }
 
