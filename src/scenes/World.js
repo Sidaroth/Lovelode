@@ -24,17 +24,12 @@ const World = function WorldFunc() {
 
         // Set level bounds.
         const surfaceOffset = gameConfig.WORLD.tileHeight * 10;
-        state
-            .getScene()
-            .matter.world.setBounds(
-                0,
-                -surfaceOffset,
-                gameConfig.WORLD.tileWidth * gameConfig.WORLD.tilesInWidth,
-                gameConfig.WORLD.tileHeight * gameConfig.WORLD.tilesInHeight + surfaceOffset,
-            );
+        const skyLimit = -surfaceOffset; // how much higher do we want to be able to fly.
+        const boundWidth = gameConfig.WORLD.tileWidth * gameConfig.WORLD.tilesInWidth;
+        const boundHeight = gameConfig.WORLD.tileHeight * gameConfig.WORLD.tilesInHeight + surfaceOffset + -skyLimit;
+        state.getScene().matter.world.setBounds(0, skyLimit, boundWidth, boundHeight);
 
         state.emitGlobal(eventConfig.SOUND.PLAY_MUSIC);
-
         cameraSetup();
     }
 

@@ -59,7 +59,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
 
     function update(time) {
         if (state.hasPhysics) {
-            // if hasPhysics has hooked into the sprite, it will affect the positions. We want state.getPosition(), state.getX() etc. to keep up with it.
+            // if hasPhysics (MatterJS engine) has hooked into the sprite, it will affect the positions. We want state.getPosition(), state.getX() etc. to keep up with it.
             const { x, y } = sprite;
 
             if (x !== state.getX() || y !== state.getY()) {
@@ -71,6 +71,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
     }
 
     function destroy() {
+        state.getParentScene().scene.remove(sprite);
         sprite.destroy();
     }
 

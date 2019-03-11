@@ -19,7 +19,7 @@ const phaserConfig = {
     physics: {
         default: 'matter',
         matter: {
-            // debug: true,
+            debug: true,
         },
     },
 };
@@ -27,5 +27,7 @@ const phaserConfig = {
 store.messageBus = createMessageBus();
 store.players = [];
 const game = new Phaser.Game(phaserConfig);
+// TODO: remove.
+window.game = game;
 
 window.addEventListener('resize', resizeCanvas);

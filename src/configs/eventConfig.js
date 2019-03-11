@@ -23,4 +23,8 @@ export default {
         START: `${prefix}collisionStart`,
         END: `${prefix}collisionEnd`,
     },
+    DRILLING: {
+        START: `${prefix}drillingStart`,
+        FINISHED: `${prefix}drillingFinished`,
+    },
 };

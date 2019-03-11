@@ -1,7 +1,7 @@
 import eventConfig from 'configs/eventConfig';
 
 const hasMatterPhysics = function hasPhysicsFunc(state) {
-    const inContactWith = [];
+    let inContactWith = [];
     let collidingCategories = [];
     let collisionCategory;
     let isStatic = true;
@@ -52,6 +52,14 @@ const hasMatterPhysics = function hasPhysicsFunc(state) {
 
             return true;
         });
+    }
+
+    function getCollidingBodies() {
+        return inContactWith;
+    }
+
+    function hasContact() {
+        return inContactWith.length > 0;
     }
 
     function isInContactWith(body) {
@@ -121,17 +129,29 @@ const hasMatterPhysics = function hasPhysicsFunc(state) {
         setupCollisionEvents();
     }
 
+    function destroy() {
+        inContactWith = [];
+
+        const matterWorld = state.getParentScene().matter.world;
+        matterWorld.off('collisionstart', onCollisionStart);
+        matterWorld.off('collisionend', onCollisionEnd);
+        matterWorld.remove(state.getSprite());
+    }
+
     return {
         hasPhysics: true,
         __created,
         applyForce,
         update,
+        destroy,
+        getCollidingBodies,
         setFixedRotation,
         setFriction,
         setStatic,
         setCollidesWith,
         setCollisionCategory,
         isInContactWith,
+        hasContact,
     };
 };
 
