@@ -41,11 +41,15 @@ const UI = function UIFunc() {
 
         state.guiData = {
             volume: 70,
+            pauseOnBlur: true,
         };
 
         gui.addFolder('Options');
         gui.add(state.guiData, 'volume', 0, 100).onChange((v) => {
             state.emitGlobal(eventConfig.SOUND.VOLUME, v / 100);
+        });
+        gui.add(state.guiData, 'pauseOnBlur').onChange((val) => {
+            state.emitGlobal(eventConfig.SOUND.PAUSEONBLUR, val);
         });
     }
 

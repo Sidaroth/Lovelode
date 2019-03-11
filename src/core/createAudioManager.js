@@ -55,6 +55,10 @@ const createAudioManager = function createAudioManagerFunc(scene) {
         isMusicPlaying = false;
     }
 
+    function _togglePauseOnBlur(val) {
+        state.setPauseOnBlur(val);
+    }
+
     function _toggleMute() {
         const muteStatus = (!state.isAudioMuted()).toString();
         localStorage.setItem(audioConfig.IDENTIFIERS.MUTE, muteStatus);
@@ -67,12 +71,13 @@ const createAudioManager = function createAudioManagerFunc(scene) {
     }
 
     function _setupListeners() {
-        state.listenGlobal(eventConfig.SOUND.SFX, _playSfx, state);
-        state.listenGlobal(eventConfig.SOUND.PLAY_MUSIC, _playMusic, state);
-        state.listenGlobal(eventConfig.SOUND.PAUSE_MUSIC, _pauseMusic, state);
-        state.listenGlobal(eventConfig.SOUND.STOP_MUSIC, _stopMusic, state);
-        state.listenGlobal(eventConfig.SOUND.VOLUME, _setVolume, state);
-        state.listenGlobal(eventConfig.SOUND.TOGGLE_MUTE, _toggleMute, state);
+        state.listenGlobal(eventConfig.SOUND.SFX, _playSfx);
+        state.listenGlobal(eventConfig.SOUND.PLAY_MUSIC, _playMusic);
+        state.listenGlobal(eventConfig.SOUND.PAUSE_MUSIC, _pauseMusic);
+        state.listenGlobal(eventConfig.SOUND.STOP_MUSIC, _stopMusic);
+        state.listenGlobal(eventConfig.SOUND.VOLUME, _setVolume);
+        state.listenGlobal(eventConfig.SOUND.TOGGLE_MUTE, _toggleMute);
+        state.listenGlobal(eventConfig.SOUND.PAUSEONBLUR, _togglePauseOnBlur);
     }
 
     function __constructor() {
