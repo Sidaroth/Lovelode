@@ -26,5 +26,6 @@ export default {
     DRILLING: {
         START: `${prefix}drillingStart`,
         FINISHED: `${prefix}drillingFinished`,
+        CANCEL: `${prefix}drillingCanceled`,
     },
 };

@@ -28,69 +28,94 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const damageThresholdOnCrash = 10;
 
     let damageTakenThisFrame = false; // because we can collide with multiple tiles simultaneously, we don't want to multiply the damage taken.
-    let isDrilling = false;
+    let drillDirection;
 
-    function attemptDrill(bodies) {
-        let closestBody;
-        let closestDist = Infinity;
-        const spriteOffset = state.getSprite().height / 5;
-        console.log(spriteOffset);
+    const projectionTest = (body, pos) => {
+        const withinX = pos.x > body.bounds.min.x && pos.x < body.bounds.max.x;
+        const withinY = pos.y > body.bounds.min.y && pos.y < body.bounds.max.y;
 
-        bodies.forEach((body) => {
-            const xDist = Math.abs(state.getX() - body.position.x);
-            const yDist = Math.abs(state.getY() + spriteOffset - body.position.y);
-            const dist = xDist ** xDist + yDist ** yDist;
-            if (dist < closestDist) {
-                closestDist = dist;
-                closestBody = body;
+        return withinX && withinY;
+    };
+
+    function getDrillTarget(bodies, direction) {
+        let target = null;
+
+        // create a projected pos that we check up against projectionTest. In essence, is the set point within the tile?
+        const pos = { x: state.getX(), y: state.getY() };
+        if (direction === gameConfig.DIRECTIONS.DOWN) {
+            pos.y += gameConfig.WORLD.tileHeight / 2 + state.getSprite().height / 2; // Place a point that is a set distance *BELOW* our centerpoint.
+        } else if (direction === gameConfig.DIRECTIONS.LEFT) {
+            pos.x -= gameConfig.WORLD.tileWidth / 2 + state.getSprite().width / 2; // place a point that is a set distance to the *RIGHT* of our centerpoint.
+        } else if (direction === gameConfig.DIRECTIONS.RIGHT) {
+            pos.x += gameConfig.WORLD.tileWidth / 2 + state.getSprite().width / 2; // place a point that is a set distance to the *LEFT* of our centerpoint.
+        }
+
+        bodies.every((body) => {
+            if (projectionTest(body, pos)) {
+                target = body;
+                return false;
             }
+
+            return true;
         });
 
+        return target;
+    }
+
+    function drill(direction) {
+        if (drillDirection === direction) return; // We're already drilling this direction.
+        if (drillDirection != null && drillDirection !== direction) {
+            state.emitGlobal(eventConfig.DRILLING.CANCEL); // We were drilling something.
+        }
+
+        if (direction === gameConfig.DIRECTIONS.UP) return; // We don't support upward drilling. (But it can cancel.)
+
+        const bodies = state.getCollidingBodies();
+        if (bodies.length === 0) return; // we're not touching anything we can drill.
+
+        const drillTarget = getDrillTarget(bodies, direction);
+        if (!drillTarget) return; // no target
+
+        drillDirection = direction;
         const data = {
-            body: closestBody,
+            body: drillTarget,
             source: state.id,
             startTime: Date.now(),
+            direction: drillDirection,
         };
 
-        console.log(data);
-
         state.emitGlobal(eventConfig.DRILLING.START, data);
-        isDrilling = true;
     }
 
     function onDrillEnd(data) {
-        isDrilling = false;
+        drillDirection = null;
     }
 
     function _onMovement(data) {
         const { delta, direction } = data;
         const frameDelta = delta / 1000;
         const gravity = state.getParentScene().matter.world.localWorld.gravity.y;
-        const spriteOffset = state.getSprite().height / 5;
 
         if (direction[gameConfig.DIRECTIONS.RIGHT]) {
             state.applyForce({ x: thrustForce * frameDelta, y: 0 });
             state.setFlipX(false);
+            drill(gameConfig.DIRECTIONS.RIGHT);
         }
 
         if (direction[gameConfig.DIRECTIONS.LEFT]) {
             state.applyForce({ x: -thrustForce * frameDelta, y: 0 });
             state.setFlipX(true);
+            drill(gameConfig.DIRECTIONS.LEFT);
         }
 
         if (direction[gameConfig.DIRECTIONS.UP]) {
             state.applyForce({ y: (-thrustForce - gravity / 2) * frameDelta, x: 0 });
+            drill(gameConfig.DIRECTIONS.UP);
         }
 
         if (direction[gameConfig.DIRECTIONS.DOWN]) {
             state.applyForce({ y: thrustForce * frameDelta, x: 0 });
-
-            if (!isDrilling) {
-                const bodies = state.getCollidingBodies().filter(b => b.position.y > state.getY() + spriteOffset);
-                if (bodies.length) {
-                    attemptDrill(bodies);
-                }
-            }
+            drill(gameConfig.DIRECTIONS.DOWN);
         }
     }
 
@@ -132,6 +157,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         state.listenOn(state, eventConfig.COLLISION.START, onCollisionStart);
         state.listenOn(state, eventConfig.COLLISION.END, onCollisionEnd);
         state.listenGlobal(eventConfig.DRILLING.FINISHED, onDrillEnd);
+        state.listenGlobal(eventConfig.DRILLING.CANCElED, onDrillEnd);
     }
 
     function __created() {
@@ -141,7 +167,10 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         setupListeners();
         state.setCollisionCategory(gameConfig.COLLISION.player);
         state.setCollidesWith([gameConfig.COLLISION.tiles, gameConfig.COLLISION.default]);
-        state.setPosition({ x: gameConfig.WORLD.tilesInWidth * gameConfig.WORLD.tileWidth / 2, y: gameConfig.WORLD.tilesInHeight * gameConfig.WORLD.tileHeight / 2 });
+        state.setPosition({
+            x: (gameConfig.WORLD.tilesInWidth * gameConfig.WORLD.tileWidth) / 2,
+            y: (gameConfig.WORLD.tilesInHeight * gameConfig.WORLD.tileHeight) / 2,
+        });
         state.setStatic(false);
         state.setFixedRotation(true);
         state.setFriction(0.08, 0.02, 1);

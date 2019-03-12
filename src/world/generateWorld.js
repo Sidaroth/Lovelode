@@ -21,8 +21,6 @@ const generateWorld = function generateWorldFunc(scene) {
             const tile = createTile(scene, tileKey);
             tile.setPosition(pos);
 
-            scene.add.circle(pos.x, pos.y, 3, 0xff0000);
-
             world.push(tile);
         }
     }
