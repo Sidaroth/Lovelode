@@ -12,7 +12,7 @@ import canEmit from 'components/events/canEmit';
 import Phaser from 'phaser';
 import spriteConfig from 'configs/spriteConfig';
 
-const createTile = function createTileFunc(scene, tilekey) {
+const createTile = function createTileFunc(scene, tileData) {
     const state = {};
 
     let internalTimer = 0;
@@ -126,7 +126,7 @@ const createTile = function createTileFunc(scene, tilekey) {
         hasSize: hasSize(state),
         canListen: canListen(state),
         canEmit: canEmit(state),
-        hasSprite: hasSprite(state, tilekey),
+        hasSprite: hasSprite(state, tileData.KEY),
         hasMatterPhysics: hasMatterPhysics(state),
     });
 };

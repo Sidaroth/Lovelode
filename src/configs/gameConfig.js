@@ -38,4 +38,34 @@ export default {
         RIGHT: 2,
         DOWN: 3,
     },
+    TILE_TYPES: {
+        DIRT: {
+            TYPE: 'dirt',
+            KEY: 'dirt00.png',
+        },
+        STONE: {
+            TYPE: 'stone',
+            KEY: 'stone.png',
+        },
+        GRASS: {
+            TYPE: 'grass',
+            KEY: 'grass.png',
+        },
+        COAL: {
+            TYPE: 'coal',
+            KEY: 'soil/001_coal.png',
+        },
+        COPPER: {
+            TYPE: 'copper',
+            KEY: 'soil/002_copper.png',
+        },
+        IRON: {
+            TYPE: 'iron',
+            KEY: 'soil/003_iron.png',
+        },
+        SILVER: {
+            TYPE: 'silver',
+            KEY: 'soil/004_silver.png',
+        },
+    },
 };

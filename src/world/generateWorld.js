@@ -1,6 +1,6 @@
 import gameConfig from 'configs/gameConfig';
 import createTile from '../entities/createTile';
-import calculateTileKey from './calculateTileKey';
+import generateTileData from './generateTileData';
 
 const generateWorld = function generateWorldFunc(scene) {
     const world = [];
@@ -17,8 +17,8 @@ const generateWorld = function generateWorldFunc(scene) {
                 y: y * gameConfig.WORLD.tileHeight + yOffset,
             };
 
-            const tileKey = calculateTileKey(x, y);
-            const tile = createTile(scene, tileKey);
+            const tileData = generateTileData(x, y);
+            const tile = createTile(scene, tileData);
             tile.setPosition(pos);
 
             world.push(tile);
