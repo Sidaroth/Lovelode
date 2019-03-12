@@ -13,17 +13,29 @@ import canEmit from 'components/events/canEmit';
 const createTile = function createTileFunc(scene, tilekey) {
     const state = {};
 
+    let internalTimer = 0;
+    let endTime = 0;
+    let timerRunning = false;
+
+    let density = 1000; // used to calculate drilling time.
+
     function onDrillingStart(data) {
         if (data.body.id !== state.getSprite().body.id || !data.body) return;
 
-        // start a timer
-        // add fancy graphics while drilling and such to the tile. Keep track of the timer.
-        // be ready to cancel drilling
-        // if drilling time is complete, give the player some loot, destroy tile.
-        setTimeout(() => {
-            state.destroy();
-            state.emitGlobal(eventConfig.DRILLING.FINISHED, state.id);
-        }, 300);
+        timerRunning = true;
+        internalTimer = Date.now();
+        endTime = internalTimer + density / data.drillSpeed; // TODO fix a better formula.
+    }
+
+    function setDensity(newDensity) {
+        density = newDensity;
+    }
+
+    function onDrillingCanceled(data) {
+        if ((data && data.body && data.body.id !== state.getSprite().body.id) || !data.body) return;
+        timerRunning = false;
+
+        // reset any drill progress on sprite too...
     }
 
     function __created() {
@@ -33,10 +45,35 @@ const createTile = function createTileFunc(scene, tilekey) {
 
         // listeners
         state.listenGlobal(eventConfig.DRILLING.START, onDrillingStart);
+        state.listenGlobal(eventConfig.DRILLING.CANCEL, onDrillingCanceled);
+    }
+
+    function updateSprite() {
+        // add drill effects to sprite;
+    }
+
+    function update(time) {
+        if (timerRunning) {
+            internalTimer += time.delta;
+
+            updateSprite();
+
+            if (internalTimer > endTime) {
+                const emitData = {
+                    tileId: state.id,
+                    loot: null,
+                };
+
+                timerRunning = false;
+                state.emitGlobal(eventConfig.DRILLING.FINISHED, emitData);
+            }
+        }
+
+        return time;
     }
 
     // public
-    const localState = { __created };
+    const localState = { __created, update, setDensity };
 
     return createState('Tile', state, {
         localState,

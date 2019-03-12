@@ -38,9 +38,8 @@ const Game = function GameFunc() {
         [window.player] = store.players;
     }
 
-    function update(time, delta) {
-        const t = { runTime: time, delta };
-        store.players.forEach(player => player.update(t));
+    function update(time) {
+        store.players.forEach(player => player.update(time));
     }
 
     function destroy() {

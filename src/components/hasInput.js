@@ -20,8 +20,22 @@ const hasInput = function hasInputFunc(state) {
         return inputType;
     }
 
+    // Propagates an event from the keyboard handler onto other components on this object.
+    function onKeyUp(evt) {
+        state.emit(eventConfig.KEYBOARD.KEYUP, evt);
+    }
+
+    function onKeyDown(evt) {
+        state.emit(eventConfig.KEYBOARD.KEYDOWN, evt);
+    }
+
     function isInputDown(...bindings) {
         return bindings.some(binding => keyboard.isKeyDown(binding));
+    }
+
+    function __created() {
+        state.listenOn(keyboard, eventConfig.KEYBOARD.KEYUP, onKeyUp);
+        state.listenOn(keyboard, eventConfig.KEYBOARD.KEYDOWN, onKeyDown);
     }
 
     function update(time) {
@@ -40,6 +54,7 @@ const hasInput = function hasInputFunc(state) {
     }
 
     return {
+        __created,
         setInputType,
         getInputType,
         update,

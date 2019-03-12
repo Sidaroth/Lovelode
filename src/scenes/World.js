@@ -4,6 +4,7 @@ import gameConfig from 'configs/gameConfig';
 import createState from 'utils/createState';
 import canEmit from 'components/events/canEmit';
 import eventConfig from 'configs/eventConfig';
+import canListen from 'components/events/canListen';
 
 /**
  * The game world (i.e level 1)
@@ -19,6 +20,17 @@ const World = function WorldFunc() {
         camera.setZoom(1);
     }
 
+    function onDrillingFinished(data) {
+        const { tileId } = data;
+
+        const index = tileMap.findIndex(tile => tile && tile.id === tileId);
+        if (index && tileMap[index]) {
+            tileMap[index].destroy();
+            delete tileMap[index];
+            tileMap[index] = null;
+        }
+    }
+
     function create() {
         tileMap = generateWorld(state.getScene());
 
@@ -31,9 +43,18 @@ const World = function WorldFunc() {
 
         state.emitGlobal(eventConfig.SOUND.PLAY_MUSIC);
         cameraSetup();
+
+        state.listenGlobal(eventConfig.DRILLING.FINISHED, onDrillingFinished);
     }
 
-    function update(time, delta) {}
+    function update(time) {
+        for (let i = 0; i < tileMap.length; i += 1) {
+            const tile = tileMap[i];
+            if (tile) {
+                tile.update(time);
+            }
+        }
+    }
 
     const localState = {
         create,
@@ -43,6 +64,7 @@ const World = function WorldFunc() {
     return createState('World', state, {
         localState,
         canEmit: canEmit(state),
+        canListen: canListen(state),
         isScene: isScene(state, gameConfig.SCENES.WORLD),
     });
 };

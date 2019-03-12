@@ -58,7 +58,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
     }
 
     function update(time) {
-        if (state.hasPhysics) {
+        if (state.hasPhysics && sprite.body) {
             // if hasPhysics (MatterJS engine) has hooked into the sprite, it will affect the positions. We want state.getPosition(), state.getX() etc. to keep up with it.
             const { x, y } = sprite;
 

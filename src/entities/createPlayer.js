@@ -11,11 +11,10 @@ import canListen from 'components/events/canListen';
 import eventConfig from 'configs/eventConfig';
 import gameConfig from 'configs/gameConfig';
 import hasSound from 'components/hasSound';
+import keybindings from 'configs/keybindings';
 
 const createPlayer = function createPlayerFunc(scene, tileKey) {
     const state = {};
-
-    let dbgGfx;
 
     // private
     const hullMax = 100;
@@ -26,9 +25,11 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const currentFuel = 100;
     const thrustForce = 1;
     const damageThresholdOnCrash = 10;
+    const drillSpeed = 1;
 
     let damageTakenThisFrame = false; // because we can collide with multiple tiles simultaneously, we don't want to multiply the damage taken.
     let drillDirection;
+    let drillTarget;
 
     const projectionTest = (body, pos) => {
         const withinX = pos.x > body.bounds.min.x && pos.x < body.bounds.max.x;
@@ -65,7 +66,8 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     function drill(direction) {
         if (drillDirection === direction) return; // We're already drilling this direction.
         if (drillDirection != null && drillDirection !== direction) {
-            state.emitGlobal(eventConfig.DRILLING.CANCEL); // We were drilling something.
+            state.emitGlobal(eventConfig.DRILLING.CANCEL, { body: drillTarget }); // We were drilling something.
+            drillTarget = null;
         }
 
         if (direction === gameConfig.DIRECTIONS.UP) return; // We don't support upward drilling. (But it can cancel.)
@@ -73,7 +75,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         const bodies = state.getCollidingBodies();
         if (bodies.length === 0) return; // we're not touching anything we can drill.
 
-        const drillTarget = getDrillTarget(bodies, direction);
+        drillTarget = getDrillTarget(bodies, direction);
         if (!drillTarget) return; // no target
 
         drillDirection = direction;
@@ -82,6 +84,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
             source: state.id,
             startTime: Date.now(),
             direction: drillDirection,
+            drillSpeed,
         };
 
         state.emitGlobal(eventConfig.DRILLING.START, data);
@@ -152,12 +155,26 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         return time;
     }
 
+    function onKeyUp(evt) {
+        if (drillTarget && drillDirection) {
+            let bindings = [];
+            Object.keys(keybindings.MOVEMENT).forEach((key) => {
+                bindings = bindings.concat(keybindings.MOVEMENT[key]);
+            });
+
+            if (bindings.includes(evt.keyCode)) {
+                state.emitGlobal(eventConfig.DRILLING.CANCEL, { body: drillTarget });
+            }
+        }
+    }
+
     function setupListeners() {
         state.listenOn(state, eventConfig.MOVEMENT, _onMovement);
+        state.listenOn(state, eventConfig.KEYBOARD.KEYUP, onKeyUp);
         state.listenOn(state, eventConfig.COLLISION.START, onCollisionStart);
         state.listenOn(state, eventConfig.COLLISION.END, onCollisionEnd);
         state.listenGlobal(eventConfig.DRILLING.FINISHED, onDrillEnd);
-        state.listenGlobal(eventConfig.DRILLING.CANCElED, onDrillEnd);
+        state.listenGlobal(eventConfig.DRILLING.CANCEL, onDrillEnd);
     }
 
     function __created() {
@@ -169,11 +186,11 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         state.setCollidesWith([gameConfig.COLLISION.tiles, gameConfig.COLLISION.default]);
         state.setPosition({
             x: (gameConfig.WORLD.tilesInWidth * gameConfig.WORLD.tileWidth) / 2,
-            y: (gameConfig.WORLD.tilesInHeight * gameConfig.WORLD.tileHeight) / 2,
+            y: (gameConfig.WORLD.tilesInHeight * gameConfig.WORLD.tileHeight) / 2 - gameConfig.tileHeight * 10,
         });
         state.setStatic(false);
         state.setFixedRotation(true);
-        state.setFriction(0.08, 0.02, 1);
+        state.setFriction(0.01, 0.02, 1);
     }
 
     // Public
