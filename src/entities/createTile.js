@@ -9,21 +9,26 @@ import gameConfig from 'configs/gameConfig';
 import eventConfig from 'configs/eventConfig';
 import canListen from 'components/events/canListen';
 import canEmit from 'components/events/canEmit';
+import Phaser from 'phaser';
+import spriteConfig from 'configs/spriteConfig';
 
 const createTile = function createTileFunc(scene, tilekey) {
     const state = {};
 
     let internalTimer = 0;
     let endTime = 0;
+    let startTime = 0;
     let timerRunning = false;
 
     let density = 1000; // used to calculate drilling time.
+    let overlay;
 
     function onDrillingStart(data) {
         if (data.body.id !== state.getSprite().body.id || !data.body) return;
 
         timerRunning = true;
-        internalTimer = Date.now();
+        startTime = Date.now();
+        internalTimer = startTime;
         endTime = internalTimer + density / data.drillSpeed; // TODO fix a better formula.
     }
 
@@ -34,11 +39,15 @@ const createTile = function createTileFunc(scene, tilekey) {
     function onDrillingCanceled(data) {
         if ((data && data.body && data.body.id !== state.getSprite().body.id) || !data.body) return;
         timerRunning = false;
-
-        // reset any drill progress on sprite too...
+        overlay.alpha = 0;
     }
 
     function __created() {
+        overlay = new Phaser.GameObjects.Sprite(state.getParentScene(), state.getX(), state.getY(), spriteConfig.DIGGERPACK.KEY, 'cracks1.png');
+        overlay.alpha = 0;
+        state.getParentScene().add.existing(overlay);
+
+        // overlay.setTexture('cracks4.png');
         state.setCollisionCategory(gameConfig.COLLISION.tiles);
         state.setCollidesWith(gameConfig.COLLISION.player);
         state.setSize({ w: gameConfig.WORLD.tileWidth, h: gameConfig.WORLD.tileHeight });
@@ -49,7 +58,29 @@ const createTile = function createTileFunc(scene, tilekey) {
     }
 
     function updateSprite() {
-        // add drill effects to sprite;
+        const totalDuration = endTime - startTime;
+        const remainingDuration = endTime - internalTimer;
+        const percent = (totalDuration - remainingDuration) / totalDuration;
+
+        overlay.alpha = 1;
+        if (percent > 0.8) {
+            overlay.setTexture(spriteConfig.DIGGERPACK.KEY, 'cracks4.png');
+        } else if (percent > 0.6) {
+            overlay.setTexture(spriteConfig.DIGGERPACK.KEY, 'cracks3.png');
+        } else if (percent > 0.4) {
+            overlay.setTexture(spriteConfig.DIGGERPACK.KEY, 'cracks2.png');
+        } else if (percent > 0.2) {
+            overlay.setTexture(spriteConfig.DIGGERPACK.KEY, 'cracks1.png');
+        } else {
+            overlay.alpha = 0;
+        }
+    }
+
+    function setPosition(pos) {
+        overlay.x = pos.x;
+        overlay.y = pos.y;
+
+        return pos;
     }
 
     function update(time) {
@@ -72,8 +103,20 @@ const createTile = function createTileFunc(scene, tilekey) {
         return time;
     }
 
+    function destroy() {
+        if (overlay) {
+            overlay.destroy();
+        }
+    }
+
     // public
-    const localState = { __created, update, setDensity };
+    const localState = {
+        __created,
+        update,
+        destroy,
+        setDensity,
+        setPosition,
+    };
 
     return createState('Tile', state, {
         localState,

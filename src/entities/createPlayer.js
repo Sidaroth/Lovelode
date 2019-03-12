@@ -31,6 +31,8 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     let drillDirection;
     let drillTarget;
 
+    let drillOnCooldown = false;
+
     const projectionTest = (body, pos) => {
         const withinX = pos.x > body.bounds.min.x && pos.x < body.bounds.max.x;
         const withinY = pos.y > body.bounds.min.y && pos.y < body.bounds.max.y;
@@ -64,9 +66,11 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     }
 
     function drill(direction) {
-        if (drillDirection === direction) return; // We're already drilling this direction.
+        if (drillOnCooldown) return;
+        if (drillDirection === direction && drillTarget) return; // We're already drilling this direction.
+
         if (drillDirection != null && drillDirection !== direction) {
-            state.emitGlobal(eventConfig.DRILLING.CANCEL, { body: drillTarget }); // We were drilling something.
+            state.emitGlobal(eventConfig.DRILLING.CANCEL, { body: drillTarget }); // We were drilling something different.
             drillTarget = null;
         }
 
@@ -75,8 +79,9 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         const bodies = state.getCollidingBodies();
         if (bodies.length === 0) return; // we're not touching anything we can drill.
 
+        const oldTarget = drillTarget;
         drillTarget = getDrillTarget(bodies, direction);
-        if (!drillTarget) return; // no target
+        if (!drillTarget || drillTarget === oldTarget) return; // no target
 
         drillDirection = direction;
         const data = {
@@ -91,7 +96,15 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     }
 
     function onDrillEnd(data) {
+        // TODO: Fix a proper cooldown, or fix drill() so we can continue drilling effectively without it.
+        // There's a conflict between the early returns, and allowing drilling to start on a new tile without a tiny break.
+        drillOnCooldown = true;
+        setTimeout(() => {
+            drillOnCooldown = false;
+        }, 30);
+
         drillDirection = null;
+        drillTarget = null;
     }
 
     function _onMovement(data) {
