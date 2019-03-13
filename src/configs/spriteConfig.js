@@ -17,8 +17,8 @@ export default {
         KEY: 'diggerpack',
         JSON: 'diggerpack.json',
     },
-    METERSANDBARS: {
-        KEY: 'metersandbars',
-        JSON: 'metersandbars.json',
+    MECHATOON: {
+        KEY: 'mechatoon',
+        JSON: 'Mechatoon.json',
     },
 };

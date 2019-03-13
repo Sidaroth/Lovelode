@@ -12,10 +12,10 @@ export default {
         WORLD: 'scene_world',
     },
     DEFAULT_TEXT_STYLE: {
-        font: 'Roboto',
-        fontSize: 20,
+        fontFamily: 'Roboto',
+        fontSize: '25px',
         fill: '#ffffff',
-        smoothed: false,
+        smoothed: true,
     },
     UI_DEFAULT: {
         tint: 0xaaaaaa,

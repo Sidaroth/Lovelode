@@ -22,13 +22,15 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const hullMax = 100;
     let hullCurrent = 100;
     const cargoCapacity = 100;
-    let currentCargoWeight = 0;
+    let cargoUsage = 0;
     const fuelCapacity = 100;
     const currentFuel = 100;
     const thrustForce = 1;
     const damageThresholdOnCrash = 10;
     const drillSpeed = 1;
     const inventory = [];
+
+    const money = 123456789;
 
     let damageTakenThisFrame = false; // because we can collide with multiple tiles simultaneously, we don't want to multiply the damage taken.
     let drillDirection;
@@ -113,9 +115,9 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
 
         if (data.loot) {
             const ore = createOre(data);
-            if (currentCargoWeight + ore.weight <= cargoCapacity) {
+            if (cargoUsage + ore.weight <= cargoCapacity) {
                 inventory.push(ore);
-                currentCargoWeight += ore.weight;
+                cargoUsage += ore.weight;
             }
         }
 
@@ -159,10 +161,11 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
             hullMax,
             hullCurrent,
             cargoCapacity,
-            currentCargoWeight,
+            currentCargoWeight: cargoUsage,
             fuelCapacity,
             currentFuel,
             inventory,
+            money,
         };
     }
 
@@ -190,7 +193,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     }
 
     function onKeyUp(evt) {
-        if (drillTarget && drillDirection) {
+        if (drillTarget && drillDirection != null) {
             let bindings = [];
             Object.keys(keybindings.MOVEMENT).forEach((key) => {
                 bindings = bindings.concat(keybindings.MOVEMENT[key]);

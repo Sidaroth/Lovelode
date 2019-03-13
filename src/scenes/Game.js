@@ -1,6 +1,6 @@
 import gameConfig from 'configs/gameConfig';
 import AudioManager from 'core/createAudioManager';
-import UI from 'scenes/UI';
+import createUI from 'scenes/UI';
 import World from 'scenes/World';
 import canListen from 'components/events/canListen';
 import createPlayer from 'entities/createPlayer';
@@ -19,7 +19,7 @@ const Game = function GameFunc() {
 
     function init() {
         // After assets are loaded. Before create.
-        UIScene = UI();
+        UIScene = createUI();
         state.getScene().scene.add(gameConfig.SCENES.UI, UIScene.getScene(), true);
         AudioManager(UIScene.getScene());
 
