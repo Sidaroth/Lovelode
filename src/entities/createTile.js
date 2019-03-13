@@ -14,6 +14,7 @@ import spriteConfig from 'configs/spriteConfig';
 
 const createTile = function createTileFunc(scene, tileData) {
     const state = {};
+    const tileType = tileData.TYPE;
 
     let internalTimer = 0;
     let endTime = 0;
@@ -57,6 +58,7 @@ const createTile = function createTileFunc(scene, tileData) {
         state.listenGlobal(eventConfig.DRILLING.CANCEL, onDrillingCanceled);
     }
 
+    // TODO optimize so we don't swap texture every frame :)
     function updateSprite() {
         const totalDuration = endTime - startTime;
         const remainingDuration = endTime - internalTimer;
@@ -76,6 +78,16 @@ const createTile = function createTileFunc(scene, tileData) {
         }
     }
 
+    function finishDrilling() {
+        const emitData = {
+            tileId: state.id,
+            loot: null,
+        };
+
+        timerRunning = false;
+        state.emitGlobal(eventConfig.DRILLING.FINISHED, emitData);
+    }
+
     function setPosition(pos) {
         overlay.x = pos.x;
         overlay.y = pos.y;
@@ -86,17 +98,10 @@ const createTile = function createTileFunc(scene, tileData) {
     function update(time) {
         if (timerRunning) {
             internalTimer += time.delta;
-
             updateSprite();
 
             if (internalTimer > endTime) {
-                const emitData = {
-                    tileId: state.id,
-                    loot: null,
-                };
-
-                timerRunning = false;
-                state.emitGlobal(eventConfig.DRILLING.FINISHED, emitData);
+                finishDrilling();
             }
         }
 

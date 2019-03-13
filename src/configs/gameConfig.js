@@ -26,6 +26,7 @@ export default {
         gravity: 0.5,
         tilesInWidth: 40,
         tilesInHeight: 20,
+        tileScale: 1.25,
     },
     COLLISION: {
         default: 0x0001,

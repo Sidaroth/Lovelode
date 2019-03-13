@@ -13,12 +13,13 @@ const generateWorld = function generateWorldFunc(scene) {
             const yOffset = gameConfig.WORLD.tileHeight / 2 + surfaceOffset;
 
             const pos = {
-                x: x * gameConfig.WORLD.tileWidth + xOffset,
-                y: y * gameConfig.WORLD.tileHeight + yOffset,
+                x: (x * gameConfig.WORLD.tileWidth + xOffset) * gameConfig.WORLD.tileScale,
+                y: (y * gameConfig.WORLD.tileHeight + yOffset) * gameConfig.WORLD.tileScale,
             };
 
             const tileData = generateTileData(x, y);
             const tile = createTile(scene, tileData);
+            tile.getSprite().setScale(gameConfig.WORLD.tileScale);
             tile.setPosition(pos);
 
             world.push(tile);

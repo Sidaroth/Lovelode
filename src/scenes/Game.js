@@ -33,7 +33,7 @@ const Game = function GameFunc() {
     }
 
     function create() {
-        store.players.push(createPlayer(worldScene.getScene(), 'Drive/digger_drive00.png'));
+        store.players.push(createPlayer(worldScene.getScene(), 'SideDriveDig/digger_side_drivedig00.png'));
         worldScene.getScene().cameras.main.startFollow(store.players[0].getSprite(), true, 0.5, 0.5);
         [window.player] = store.players;
     }

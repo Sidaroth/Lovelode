@@ -45,7 +45,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
     }
 
     function setTexture(texture) {
-        sprite.setTexture(texture);
+        sprite.setTexture(spriteConfig.DIGGERPACK.KEY, texture);
     }
 
     function setPosition(pos) {

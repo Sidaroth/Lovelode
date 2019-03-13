@@ -26,6 +26,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const thrustForce = 1;
     const damageThresholdOnCrash = 10;
     const drillSpeed = 1;
+    const inventory = [];
 
     let damageTakenThisFrame = false; // because we can collide with multiple tiles simultaneously, we don't want to multiply the damage taken.
     let drillDirection;
@@ -103,6 +104,11 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
             drillOnCooldown = false;
         }, 30);
 
+        if (data.loot) {
+            const loot = data.loot;
+            inventory.push(loot);
+        }
+
         drillDirection = null;
         drillTarget = null;
     }
@@ -114,12 +120,14 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
 
         if (direction[gameConfig.DIRECTIONS.RIGHT]) {
             state.applyForce({ x: thrustForce * frameDelta, y: 0 });
+            state.setTexture('SideDriveDig/digger_side_drivedig00.png');
             state.setFlipX(false);
             drill(gameConfig.DIRECTIONS.RIGHT);
         }
 
         if (direction[gameConfig.DIRECTIONS.LEFT]) {
             state.applyForce({ x: -thrustForce * frameDelta, y: 0 });
+            state.setTexture('SideDriveDig/digger_side_drivedig00.png');
             state.setFlipX(true);
             drill(gameConfig.DIRECTIONS.LEFT);
         }
@@ -131,6 +139,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
 
         if (direction[gameConfig.DIRECTIONS.DOWN]) {
             state.applyForce({ y: thrustForce * frameDelta, x: 0 });
+            state.setTexture('Drivedig/digger_drivedig00.png');
             drill(gameConfig.DIRECTIONS.DOWN);
         }
     }
