@@ -10,6 +10,8 @@ import audioConfig from 'configs/audioConfig';
 import store from 'root/store';
 import Phaser from 'phaser';
 import hasInput from 'components/hasInput';
+import canListen from 'components/events/canListen';
+import keybindings from 'configs/keybindings';
 
 /**
  * Layer/Scene for UI elements.
@@ -194,11 +196,23 @@ const createUI = function createUIFunc() {
         return time;
     }
 
+    function showOrHideInventory() {
+        console.log('Inventory time!');
+    }
+
+    function setupListeners() {
+        state.listenOn(state, eventConfig.KEYBOARD.KEYDOWN, (evt) => {
+            if (keybindings.INVENTORY.includes(evt.keyCode)) {
+                showOrHideInventory();
+            }
+        });
+    }
+
     function create() {
         setupDatGui();
         setupPerformanceStats();
         setupMute();
-
+        setupListeners();
         setupUIElements();
     }
 
@@ -217,9 +231,10 @@ const createUI = function createUIFunc() {
 
     return createState('UIScene', state, {
         localState,
-        isScene: isScene(state, gameConfig.SCENES.UI),
+        canListen: canListen(state),
         canEmit: canEmit(state),
         hasInput: hasInput(state),
+        isScene: isScene(state, gameConfig.SCENES.UI),
     });
 };
 

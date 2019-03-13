@@ -8,6 +8,7 @@ import Game from 'scenes/Game';
 import resizeCanvas from 'utils/resizeCanvas';
 import store from './store';
 import createMessageBus from 'core/createMessageBus';
+import createKeyboardInput from 'core/createKeyboardInput';
 
 const phaserConfig = {
     type: Phaser.WEBGL,
@@ -27,6 +28,8 @@ const phaserConfig = {
 
 store.messageBus = createMessageBus();
 store.players = [];
+store.keyboard = createKeyboardInput();
+
 const game = new Phaser.Game(phaserConfig);
 // TODO: remove.
 window.game = game;

@@ -7,4 +7,5 @@ export default {
         DOWN: [KEYCODES.S, KEYCODES.DOWN_ARROW],
         RIGHT: [KEYCODES.D, KEYCODES.RIGHT_ARROW],
     },
+    INVENTORY: [KEYCODES.I],
 };

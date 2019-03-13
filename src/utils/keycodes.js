@@ -9,4 +9,5 @@ export default {
     D: 68,
     ENTER: 13,
     ESCAPE: 27,
+    I: 73,
 };

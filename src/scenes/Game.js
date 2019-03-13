@@ -7,7 +7,6 @@ import createPlayer from 'entities/createPlayer';
 import store from '../store';
 import isScene from '../components/isScene';
 import createState from 'utils/createState';
-import createKeyboardInput from 'core/createKeyboardInput';
 
 /**
  * Responsible for delegating the various levels, holding the various core systems and such.
@@ -18,6 +17,7 @@ const Game = function GameFunc() {
     let worldScene;
 
     function init() {
+        store.keyboard.enable();
         // After assets are loaded. Before create.
         UIScene = createUI();
         state.getScene().scene.add(gameConfig.SCENES.UI, UIScene.getScene(), true);
@@ -25,10 +25,6 @@ const Game = function GameFunc() {
 
         worldScene = World();
         state.getScene().scene.add(gameConfig.SCENES.WORLD, worldScene.getScene(), true);
-
-        store.keyboard = createKeyboardInput();
-        store.keyboard.enable();
-
         state.getScene().scene.bringToTop(UIScene.getScene()); // make sure UI elements are always displayed above any other scenes.
     }
 
