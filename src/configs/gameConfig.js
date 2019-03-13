@@ -21,7 +21,6 @@ export default {
         tint: 0xaaaaaa,
     },
     WORLD: {
-        gravity: 0.5,
         tilesInWidth: 40,
         tilesInHeight: 20,
     },

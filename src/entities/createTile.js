@@ -20,6 +20,7 @@ const createTile = function createTileFunc(scene, tileData) {
     const hasLoot = tileData.LOOT;
     const isDrillable = tileData.DRILLABLE;
     const weight = tileData.WEIGHT;
+    const value = tileData.VALUE;
 
     let density = tileData.DENSITY; // used to calculate drilling time.
     let internalTimer = 0;
@@ -29,7 +30,7 @@ const createTile = function createTileFunc(scene, tileData) {
     let overlay;
 
     function onDrillingStart(data) {
-        if (data.body.id !== state.getSprite().body.id || !data.body) return;
+        if (!isDrillable || data.body.id !== state.getSprite().body.id || !data.body) return;
 
         timerRunning = true;
         startTime = Date.now();
@@ -85,7 +86,10 @@ const createTile = function createTileFunc(scene, tileData) {
     function finishDrilling() {
         const emitData = {
             tileId: state.id,
-            loot: null,
+            loot: hasLoot,
+            weight,
+            type: tileType,
+            value,
         };
 
         timerRunning = false;

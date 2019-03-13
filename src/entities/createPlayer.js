@@ -13,6 +13,7 @@ import gameConfig from 'configs/gameConfig';
 import hasSound from 'components/hasSound';
 import keybindings from 'configs/keybindings';
 import tileConfig from 'configs/tileConfig';
+import createOre from './createOre';
 
 const createPlayer = function createPlayerFunc(scene, tileKey) {
     const state = {};
@@ -21,7 +22,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const hullMax = 100;
     let hullCurrent = 100;
     const cargoCapacity = 100;
-    const currentCargoWeight = 0;
+    let currentCargoWeight = 0;
     const fuelCapacity = 100;
     const currentFuel = 100;
     const thrustForce = 1;
@@ -67,13 +68,18 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         return target;
     }
 
+    function cancelDrilling() {
+        state.emitGlobal(eventConfig.DRILLING.CANCEL, { body: drillTarget }); // We were drilling something different.
+        drillDirection = null;
+        drillTarget = null;
+    }
+
     function drill(direction) {
         if (drillOnCooldown) return;
         if (drillDirection === direction && drillTarget) return; // We're already drilling this direction.
 
         if (drillDirection != null && drillDirection !== direction) {
-            state.emitGlobal(eventConfig.DRILLING.CANCEL, { body: drillTarget }); // We were drilling something different.
-            drillTarget = null;
+            cancelDrilling();
         }
 
         if (direction === gameConfig.DIRECTIONS.UP) return; // We don't support upward drilling. (But it can cancel.)
@@ -97,7 +103,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         state.emitGlobal(eventConfig.DRILLING.START, data);
     }
 
-    function onDrillEnd(data) {
+    function onDrillingSuccess(data) {
         // TODO: Fix a proper cooldown, or fix drill() so we can continue drilling effectively without it.
         // There's a conflict between the early returns, and allowing drilling to start on a new tile without a tiny break.
         drillOnCooldown = true;
@@ -106,8 +112,11 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         }, 30);
 
         if (data.loot) {
-            const loot = data.loot;
-            inventory.push(loot);
+            const ore = createOre(data);
+            if (currentCargoWeight + ore.weight <= cargoCapacity) {
+                inventory.push(ore);
+                currentCargoWeight += ore.weight;
+            }
         }
 
         drillDirection = null;
@@ -153,6 +162,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
             currentCargoWeight,
             fuelCapacity,
             currentFuel,
+            inventory,
         };
     }
 
@@ -173,6 +183,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
 
     function onCollisionEnd(event) {}
 
+    // TODO: cancel drilling if we move too far from the drillstart point.
     function update(time) {
         damageTakenThisFrame = false;
         return time;
@@ -196,8 +207,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         state.listenOn(state, eventConfig.KEYBOARD.KEYUP, onKeyUp);
         state.listenOn(state, eventConfig.COLLISION.START, onCollisionStart);
         state.listenOn(state, eventConfig.COLLISION.END, onCollisionEnd);
-        state.listenGlobal(eventConfig.DRILLING.FINISHED, onDrillEnd);
-        state.listenGlobal(eventConfig.DRILLING.CANCEL, onDrillEnd);
+        state.listenGlobal(eventConfig.DRILLING.FINISHED, onDrillingSuccess);
     }
 
     function __created() {

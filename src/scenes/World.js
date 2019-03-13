@@ -36,11 +36,11 @@ const World = function WorldFunc() {
         tileMap = generateWorld(state.getScene());
 
         // Set level bounds.
-        const surfaceOffset = tileConfig.DATA.tileHeight * 10 * tileConfig.DATA.tileScale;
+        const surfaceOffset = tileConfig.DATA.tileHeight * tileConfig.DATA.tileScale * 10; // how many tileHeights from the top (0, 0) do we want to move them.
         const skyLimit = -surfaceOffset; // how much higher do we want to be able to fly.
-        const boundWidth = tileConfig.DATA.tileWidth * tileConfig.DATA.tilesInWidth * tileConfig.DATA.tileScale;
+        const boundWidth = tileConfig.DATA.tileWidth * tileConfig.DATA.tileScale * gameConfig.WORLD.tilesInWidth;
         const boundHeight =
-            (tileConfig.DATA.tileHeight * gameConfig.WORLD.tilesInHeight + surfaceOffset + -skyLimit) * tileConfig.DATA.tileScale;
+            tileConfig.DATA.tileHeight * tileConfig.DATA.tileScale * gameConfig.WORLD.tilesInHeight + surfaceOffset + -skyLimit;
         state.getScene().matter.world.setBounds(0, skyLimit, boundWidth, boundHeight);
 
         state.emitGlobal(eventConfig.SOUND.PLAY_MUSIC);
