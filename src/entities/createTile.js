@@ -11,17 +11,21 @@ import canListen from 'components/events/canListen';
 import canEmit from 'components/events/canEmit';
 import Phaser from 'phaser';
 import spriteConfig from 'configs/spriteConfig';
+import tileConfig from 'configs/tileConfig';
 
 const createTile = function createTileFunc(scene, tileData) {
     const state = {};
-    const tileType = tileData.TYPE;
 
+    const tileType = tileData.TYPE;
+    const hasLoot = tileData.LOOT;
+    const isDrillable = tileData.DRILLABLE;
+    const weight = tileData.WEIGHT;
+
+    let density = tileData.DENSITY; // used to calculate drilling time.
     let internalTimer = 0;
     let endTime = 0;
     let startTime = 0;
     let timerRunning = false;
-
-    let density = 1000; // used to calculate drilling time.
     let overlay;
 
     function onDrillingStart(data) {
@@ -51,7 +55,7 @@ const createTile = function createTileFunc(scene, tileData) {
         // overlay.setTexture('cracks4.png');
         state.setCollisionCategory(gameConfig.COLLISION.tiles);
         state.setCollidesWith(gameConfig.COLLISION.player);
-        state.setSize({ w: gameConfig.WORLD.tileWidth, h: gameConfig.WORLD.tileHeight });
+        state.setSize({ w: tileConfig.DATA.tileWidth, h: tileConfig.DATA.tileHeight });
 
         // listeners
         state.listenGlobal(eventConfig.DRILLING.START, onDrillingStart);

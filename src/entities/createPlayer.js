@@ -12,6 +12,7 @@ import eventConfig from 'configs/eventConfig';
 import gameConfig from 'configs/gameConfig';
 import hasSound from 'components/hasSound';
 import keybindings from 'configs/keybindings';
+import tileConfig from 'configs/tileConfig';
 
 const createPlayer = function createPlayerFunc(scene, tileKey) {
     const state = {};
@@ -47,11 +48,11 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         // create a projected pos that we check up against projectionTest. In essence, is the set point within the tile?
         const pos = { x: state.getX(), y: state.getY() };
         if (direction === gameConfig.DIRECTIONS.DOWN) {
-            pos.y += gameConfig.WORLD.tileHeight / 2 + state.getSprite().height / 2; // Place a point that is a set distance *BELOW* our centerpoint.
+            pos.y += tileConfig.DATA.tileHeight / 2 + state.getSprite().height / 2; // Place a point that is a set distance *BELOW* our centerpoint.
         } else if (direction === gameConfig.DIRECTIONS.LEFT) {
-            pos.x -= gameConfig.WORLD.tileWidth / 2 + state.getSprite().width / 2; // place a point that is a set distance to the *RIGHT* of our centerpoint.
+            pos.x -= tileConfig.DATA.tileWidth / 2 + state.getSprite().width / 2; // place a point that is a set distance to the *RIGHT* of our centerpoint.
         } else if (direction === gameConfig.DIRECTIONS.RIGHT) {
-            pos.x += gameConfig.WORLD.tileWidth / 2 + state.getSprite().width / 2; // place a point that is a set distance to the *LEFT* of our centerpoint.
+            pos.x += tileConfig.DATA.tileWidth / 2 + state.getSprite().width / 2; // place a point that is a set distance to the *LEFT* of our centerpoint.
         }
 
         bodies.every((body) => {
@@ -207,8 +208,8 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         state.setCollisionCategory(gameConfig.COLLISION.player);
         state.setCollidesWith([gameConfig.COLLISION.tiles, gameConfig.COLLISION.default]);
         state.setPosition({
-            x: (gameConfig.WORLD.tilesInWidth * gameConfig.WORLD.tileWidth) / 2,
-            y: (gameConfig.WORLD.tilesInHeight * gameConfig.WORLD.tileHeight) / 2 - gameConfig.tileHeight * 10,
+            x: (gameConfig.WORLD.tilesInWidth * tileConfig.DATA.tileWidth) / 2,
+            y: (gameConfig.WORLD.tilesInHeight * tileConfig.DATA.tileHeight) / 2 - tileConfig.DATA.tileHeight * 10,
         });
         state.setStatic(false);
         state.setFixedRotation(true);

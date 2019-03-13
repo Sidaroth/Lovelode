@@ -1,4 +1,4 @@
-import gameConfig from 'configs/gameConfig';
+import tileConfig from 'configs/tileConfig';
 import getRandomInt from 'utils/getRandomInt';
 
 /*
@@ -6,21 +6,21 @@ import getRandomInt from 'utils/getRandomInt';
  * TODO: Make it smarter when it comes to veins/clusters of ore. It should be likely to have clusters of say 4-5 nodes close to eachother, but not 45.
  */
 const generateTileData = function generateTileDataFunc(x, y) {
-    let tileData = gameConfig.TILE_TYPES.DIRT;
+    let tileData = tileConfig.TYPES.DIRT;
 
     if (y === 0) {
-        tileData = gameConfig.TILE_TYPES.GRASS;
+        tileData = tileConfig.TYPES.GRASS;
     } else if (y > 1) {
         const random = getRandomInt(0, 100);
 
         if (random > 80 && random < 88) {
-            tileData = gameConfig.TILE_TYPES.COAL;
+            tileData = tileConfig.TYPES.COAL;
         } else if (random >= 88 && random <= 93) {
-            tileData = gameConfig.TILE_TYPES.COPPER;
+            tileData = tileConfig.TYPES.COPPER;
         } else if (random > 93 && random < 96) {
-            tileData = gameConfig.TILE_TYPES.IRON;
+            tileData = tileConfig.TYPES.IRON;
         } else if (random >= 96) {
-            tileData = gameConfig.TILE_TYPES.SILVER;
+            tileData = tileConfig.TYPES.SILVER;
         }
     }
 

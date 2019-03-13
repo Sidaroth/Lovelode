@@ -1,0 +1,66 @@
+export default {
+    DATA: {
+        tileWidth: 64,
+        tileHeight: 64,
+        tileScale: 1.25,
+    },
+    TYPES: {
+        CONCRETE: {
+            // Meant to be under buildings and around the bottom of the map etc...
+            TYPE: 'stone',
+            KEY: 'stone.png',
+            LOOT: false,
+            WEIGHT: 0,
+            DRILLABLE: false,
+            DENSITY: 0,
+        },
+        DIRT: {
+            TYPE: 'dirt',
+            KEY: 'dirt00.png',
+            WEIGHT: 0,
+            LOOT: false,
+            DRILLABLE: true,
+            DENSITY: 600,
+        },
+        GRASS: {
+            TYPE: 'grass',
+            KEY: 'grass.png',
+            WEIGHT: 0,
+            LOOT: false,
+            DRILLABLE: true,
+            DENSITY: 600,
+        },
+        COAL: {
+            TYPE: 'coal',
+            KEY: 'soil/001_coal.png',
+            WEIGHT: 1,
+            LOOT: false,
+            DRILLABLE: true,
+            DENSITY: 1000,
+        },
+        COPPER: {
+            TYPE: 'copper',
+            KEY: 'soil/002_copper.png',
+            WEIGHT: 2,
+            LOOT: false,
+            DRILLABLE: true,
+            DENSITY: 1000,
+        },
+        IRON: {
+            TYPE: 'iron',
+            KEY: 'soil/003_iron.png',
+            WEIGHT: 3,
+            LOOT: false,
+            DRILLABLE: true,
+            DENSITY: 1000,
+        },
+        SILVER: {
+            TYPE: 'silver',
+            KEY: 'soil/004_silver.png',
+            WEIGHT: 5,
+            LOOT: false,
+            DRILLABLE: true,
+            DENSITY: 1000,
+        },
+    },
+};

@@ -21,12 +21,9 @@ export default {
         tint: 0xaaaaaa,
     },
     WORLD: {
-        tileWidth: 64,
-        tileHeight: 64,
         gravity: 0.5,
         tilesInWidth: 40,
         tilesInHeight: 20,
-        tileScale: 1.25,
     },
     COLLISION: {
         default: 0x0001,
@@ -38,35 +35,5 @@ export default {
         UP: 1,
         RIGHT: 2,
         DOWN: 3,
-    },
-    TILE_TYPES: {
-        DIRT: {
-            TYPE: 'dirt',
-            KEY: 'dirt00.png',
-        },
-        STONE: {
-            TYPE: 'stone',
-            KEY: 'stone.png',
-        },
-        GRASS: {
-            TYPE: 'grass',
-            KEY: 'grass.png',
-        },
-        COAL: {
-            TYPE: 'coal',
-            KEY: 'soil/001_coal.png',
-        },
-        COPPER: {
-            TYPE: 'copper',
-            KEY: 'soil/002_copper.png',
-        },
-        IRON: {
-            TYPE: 'iron',
-            KEY: 'soil/003_iron.png',
-        },
-        SILVER: {
-            TYPE: 'silver',
-            KEY: 'soil/004_silver.png',
-        },
     },
 };
