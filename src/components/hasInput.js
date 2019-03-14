@@ -34,7 +34,6 @@ const hasInput = function hasInputFunc(state) {
     }
 
     function __created() {
-        console.log(state);
         state.listenOn(keyboard, eventConfig.KEYBOARD.KEYUP, onKeyUp);
         state.listenOn(keyboard, eventConfig.KEYBOARD.KEYDOWN, onKeyDown);
     }

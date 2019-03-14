@@ -12,6 +12,7 @@ import Phaser from 'phaser';
 import hasInput from 'components/hasInput';
 import canListen from 'components/events/canListen';
 import keybindings from 'configs/keybindings';
+import tileConfig from 'configs/tileConfig';
 
 /**
  * Layer/Scene for UI elements.
@@ -26,6 +27,12 @@ const createUI = function createUIFunc() {
     let moneyBackground;
     let fuelBackground;
     let hullBackground;
+
+    let inventoryContainer;
+    let inventoryBackground;
+    let inventoryTitleText;
+    let showInventory = false;
+    const inventoryItems = new Map();
 
     let moneyText;
     let fuelText;
@@ -94,27 +101,47 @@ const createUI = function createUIFunc() {
     }
 
     function updatePlayerStatus() {
-        // Do whatever UI related stuff..
         const stats = store.players[0].getShipStatus();
-        const { money } = stats;
+        const {
+            money, inventory, cargoUsage, cargoCapacity,
+        } = stats;
 
-        const hullPercent = stats.hullCurrent / stats.hullMax;
-        const fuelPercent = stats.currentFuel / stats.fuelCapacity;
-        const cargoUsage = stats.cargoUsage / stats.cargoCapacity;
-
-        const iconOffset = moneyBackground.width * bgScaleFactor / 10;
+        const iconOffset = (moneyBackground.width * bgScaleFactor) / 10;
         const yOffset = 3; // because the bar is lower than the top of the sprite, it looks odd without.
         moneyText.setText(money);
         moneyText.x = moneyBackground.x - moneyText.width / 2 + iconOffset;
         moneyText.y = moneyBackground.y - moneyText.height / 2 + yOffset;
 
-        fuelText.setText(`${stats.currentFuel}/${stats.fuelCapacity} (${fuelPercent * 100}%)`);
+        fuelText.setText(`${stats.currentFuel}/${stats.fuelCapacity}`);
         fuelText.x = fuelBackground.x - fuelText.width / 2 + iconOffset;
         fuelText.y = fuelBackground.y - fuelText.height / 2 + yOffset;
 
-        hullText.setText(`${stats.hullCurrent}/${stats.hullMax} (${hullPercent * 100}%)`);
+        hullText.setText(`${stats.hullCurrent}/${stats.hullMax}`);
         hullText.x = hullBackground.x - hullText.width / 2 + iconOffset;
         hullText.y = hullBackground.y - hullText.height / 2 + yOffset;
+
+        // TODO: Show cargo usage/weight / capacity in inventory
+        // TODO: update inventory stuff on event instead. (i.e OnLoot/OnDrop/OnSell/OnBuy)
+        const inventoryStatus = new Map();
+        inventory.forEach((item) => {
+            let data = inventoryStatus.get(item.type);
+            if (!data) {
+                data = {
+                    weight: 0,
+                    count: 0,
+                };
+            }
+
+            data.weight += item.weight;
+            data.count += 1;
+
+            inventoryStatus.set(item.type, data);
+        });
+
+        inventoryItems.forEach((item) => {
+            const data = inventoryStatus.get(item.type);
+            item.text.setText(`x ${data ? data.count : 0} (${item.type})`);
+        });
     }
 
     function getMuteIconKey() {
@@ -139,43 +166,138 @@ const createUI = function createUIFunc() {
         muteIcon.on('pointerup', updateMute, state);
     }
 
+    function createInventoryItem(tileData) {
+        const container = new Phaser.GameObjects.Container(state.getScene(), 0, 0);
+        const icon = new Phaser.GameObjects.Sprite(state.getScene(), 0, 0, spriteConfig.DIGGERPACK.KEY, `transparent_borderless/${tileData.KEY}`).setScale(0.6);
+        const text = new Phaser.GameObjects.Text(state.getScene(), 25, 0, `xX (${tileData.TYPE})`, gameConfig.DEFAULT_TEXT_STYLE);
+        text.y -= text.height / 2;
+        text.setStroke('#000000', 5);
+        text.setFontStyle('bold');
+
+        container.add(icon);
+        container.add(text);
+
+        const item = {
+            container,
+            icon,
+            text,
+            type: tileData.TYPE,
+        };
+
+        inventoryItems.set(tileData.KEY, item);
+
+        return item;
+    }
+
+    function createInventory() {
+        inventoryContainer = new Phaser.GameObjects.Container(
+            state.getScene(),
+            gameConfig.GAME.VIEWWIDTH / 2,
+            gameConfig.GAME.VIEWHEIGHT / 2,
+        );
+
+        inventoryBackground = new Phaser.GameObjects.Sprite(state.getScene(), 0, 0, spriteConfig.MECHATOON.KEY, 'window/window_8_1.png');
+        inventoryTitleText = new Phaser.GameObjects.Text(state.getScene(), 0, -inventoryBackground.height / 2, 'Inventory', gameConfig.GAME.DEFAULT_TEXT_STYLE);
+        inventoryTitleText.setFontStyle('bold');
+        inventoryTitleText.setFontSize('60px');
+        inventoryTitleText.setFill('#eeeeee');
+        inventoryTitleText.setStroke(0x000000, 6);
+        inventoryTitleText.x -= inventoryTitleText.width / 2;
+        inventoryTitleText.y += inventoryTitleText.height / 2;
+
+        inventoryContainer.add(inventoryBackground);
+        inventoryContainer.add(inventoryTitleText);
+
+        let numberOfItems = 0;
+        Object.keys(tileConfig.TYPES).forEach((typeKey) => {
+            const tileType = tileConfig.TYPES[typeKey];
+            if (tileType.LOOT) {
+                const item = createInventoryItem(tileType);
+                item.container.x = -inventoryBackground.width / 2 + inventoryBackground.width / 8;
+                item.container.y = -180 + numberOfItems * 55;
+                inventoryContainer.add(item.container);
+                numberOfItems += 1;
+            }
+        });
+
+        inventoryContainer.setScale(0.75);
+        inventoryContainer.setActive(false).setVisible(false);
+        state.getScene().add.existing(inventoryContainer);
+    }
+
     function setupUIElements() {
         // Backgrounds
         moneyBackground = new Phaser.GameObjects.Sprite(state.getScene(), 0, 0, spriteConfig.MECHATOON.KEY, 'elements/hud_2.png').setScale(bgScaleFactor);
         fuelBackground = new Phaser.GameObjects.Sprite(state.getScene(), 0, 0, spriteConfig.MECHATOON.KEY, 'elements/hud_2.png').setScale(bgScaleFactor);
         hullBackground = new Phaser.GameObjects.Sprite(state.getScene(), 0, 0, spriteConfig.MECHATOON.KEY, 'elements/hud_2.png').setScale(bgScaleFactor);
 
-        const spacing = (moneyBackground.height * 1.25 * bgScaleFactor);
+        const spacing = moneyBackground.height * 1.25 * bgScaleFactor;
         const xPadding = 15;
         const yPadding = 15;
 
-        moneyBackground.x = xPadding + (moneyBackground.width / 2 * bgScaleFactor);
-        moneyBackground.y = yPadding + (moneyBackground.height / 2 * bgScaleFactor);
+        moneyBackground.x = xPadding + (moneyBackground.width / 2) * bgScaleFactor;
+        moneyBackground.y = yPadding + (moneyBackground.height / 2) * bgScaleFactor;
 
-        fuelBackground.x = xPadding + (fuelBackground.width / 2 * bgScaleFactor);
-        fuelBackground.y = spacing + yPadding + (fuelBackground.height / 2 * bgScaleFactor);
+        fuelBackground.x = xPadding + (fuelBackground.width / 2) * bgScaleFactor;
+        fuelBackground.y = spacing + yPadding + (fuelBackground.height / 2) * bgScaleFactor;
 
-        hullBackground.x = xPadding + (hullBackground.width / 2 * bgScaleFactor);
-        hullBackground.y = 2 * spacing + yPadding + (hullBackground.height / 2 * bgScaleFactor);
+        hullBackground.x = xPadding + (hullBackground.width / 2) * bgScaleFactor;
+        hullBackground.y = 2 * spacing + yPadding + (hullBackground.height / 2) * bgScaleFactor;
 
         // Icons
-        const hullIcon = new Phaser.GameObjects.Sprite(state.getScene(), 0, 0, spriteConfig.MECHATOON.KEY, 'icons/icon_enable_2.png').setScale(iconScaleFactor);
-        const moneyIcon = new Phaser.GameObjects.Sprite(state.getScene(), 0, 0, spriteConfig.MECHATOON.KEY, 'icons/icon_enable_7.png').setScale(iconScaleFactor);
-        const fuelIcon = new Phaser.GameObjects.Sprite(state.getScene(), 0, 0, spriteConfig.MECHATOON.KEY, 'icons/icon_enable_17.png').setScale(iconScaleFactor);
+        const hullIcon = new Phaser.GameObjects.Sprite(
+            state.getScene(),
+            0,
+            0,
+            spriteConfig.MECHATOON.KEY,
+            'icons/icon_enable_2.png',
+        ).setScale(iconScaleFactor);
+        const moneyIcon = new Phaser.GameObjects.Sprite(
+            state.getScene(),
+            0,
+            0,
+            spriteConfig.MECHATOON.KEY,
+            'icons/icon_enable_7.png',
+        ).setScale(iconScaleFactor);
+        const fuelIcon = new Phaser.GameObjects.Sprite(
+            state.getScene(),
+            0,
+            0,
+            spriteConfig.MECHATOON.KEY,
+            'icons/icon_enable_17.png',
+        ).setScale(iconScaleFactor);
 
-        hullIcon.x = hullBackground.x - hullBackground.width * bgScaleFactor / 2 + xPadding * 1.5;
+        hullIcon.x = hullBackground.x - (hullBackground.width * bgScaleFactor) / 2 + xPadding * 1.5;
         hullIcon.y = hullBackground.y;
 
-        moneyIcon.x = moneyBackground.x - moneyBackground.width * bgScaleFactor / 2 + xPadding * 1.5;
+        moneyIcon.x = moneyBackground.x - (moneyBackground.width * bgScaleFactor) / 2 + xPadding * 1.5;
         moneyIcon.y = moneyBackground.y;
 
-        fuelIcon.x = fuelBackground.x - fuelBackground.width * bgScaleFactor / 2 + xPadding * 1.5;
+        fuelIcon.x = fuelBackground.x - (fuelBackground.width * bgScaleFactor) / 2 + xPadding * 1.5;
         fuelIcon.y = fuelBackground.y;
 
         // text
-        moneyText = new Phaser.GameObjects.Text(state.getScene(), moneyBackground.x, moneyBackground.y, 'Default text', gameConfig.DEFAULT_TEXT_STYLE);
-        fuelText = new Phaser.GameObjects.Text(state.getScene(), fuelBackground.x, fuelBackground.y, 'Default text', gameConfig.DEFAULT_TEXT_STYLE);
-        hullText = new Phaser.GameObjects.Text(state.getScene(), hullBackground.x, hullBackground.y, 'Default text', gameConfig.DEFAULT_TEXT_STYLE);
+        moneyText = new Phaser.GameObjects.Text(
+            state.getScene(),
+            moneyBackground.x,
+            moneyBackground.y,
+            'Default text',
+            gameConfig.DEFAULT_TEXT_STYLE,
+        );
+        fuelText = new Phaser.GameObjects.Text(
+            state.getScene(),
+            fuelBackground.x,
+            fuelBackground.y,
+            'Default text',
+            gameConfig.DEFAULT_TEXT_STYLE,
+        );
+        hullText = new Phaser.GameObjects.Text(
+            state.getScene(),
+            hullBackground.x,
+            hullBackground.y,
+            'Default text',
+            gameConfig.DEFAULT_TEXT_STYLE,
+        );
 
         // Add to scene.
         state.getScene().add.existing(moneyBackground);
@@ -189,6 +311,8 @@ const createUI = function createUIFunc() {
         state.getScene().add.existing(moneyText);
         state.getScene().add.existing(fuelText);
         state.getScene().add.existing(hullText);
+
+        createInventory();
     }
 
     function update(time) {
@@ -197,7 +321,8 @@ const createUI = function createUIFunc() {
     }
 
     function showOrHideInventory() {
-        console.log('Inventory time!');
+        showInventory = !showInventory;
+        inventoryContainer.setActive(showInventory).setVisible(showInventory);
     }
 
     function setupListeners() {

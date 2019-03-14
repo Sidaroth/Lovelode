@@ -14,11 +14,18 @@ const World = function WorldFunc() {
     const state = {};
     let tileMap;
 
+    const worldBounds = {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    };
+
     function cameraSetup() {
         const camera = state.getScene().cameras.main;
         camera.setViewport(0, 0, gameConfig.GAME.VIEWWIDTH, gameConfig.GAME.VIEWHEIGHT);
-        camera.removeBounds();
         camera.setZoom(1);
+        camera.setBounds(0, worldBounds.y, worldBounds.width, worldBounds.height);
     }
 
     function onDrillingFinished(data) {
@@ -41,6 +48,11 @@ const World = function WorldFunc() {
         const boundWidth = tileConfig.DATA.tileWidth * tileConfig.DATA.tileScale * gameConfig.WORLD.tilesInWidth;
         const boundHeight =
             tileConfig.DATA.tileHeight * tileConfig.DATA.tileScale * gameConfig.WORLD.tilesInHeight + surfaceOffset + -skyLimit;
+
+        worldBounds.x = 0;
+        worldBounds.y = skyLimit;
+        worldBounds.width = boundWidth;
+        worldBounds.height = boundHeight;
         state.getScene().matter.world.setBounds(0, skyLimit, boundWidth, boundHeight);
 
         state.emitGlobal(eventConfig.SOUND.PLAY_MUSIC);

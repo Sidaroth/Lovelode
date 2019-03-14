@@ -12,15 +12,22 @@ const generateTileData = function generateTileDataFunc(x, y) {
         tileData = tileConfig.TYPES.GRASS;
     } else if (y > 1) {
         const random = getRandomInt(0, 100);
-
-        if (random > 80 && random < 88) {
+        if (random < 4) {
+            tileData = null;
+        } else if (random > 75 && random < 80) {
             tileData = tileConfig.TYPES.COAL;
-        } else if (random >= 88 && random <= 93) {
+        } else if (random > 80 && random < 84) {
             tileData = tileConfig.TYPES.COPPER;
-        } else if (random > 93 && random < 96) {
+        } else if (random >= 85 && random <= 88) {
             tileData = tileConfig.TYPES.IRON;
-        } else if (random >= 96) {
+        } else if (random > 89 && random < 93) {
             tileData = tileConfig.TYPES.SILVER;
+        } else if (random >= 93 && random <= 95) {
+            tileData = tileConfig.TYPES.LAPIS_LAZULI;
+        } else if (random > 95 && random < 98) {
+            tileData = tileConfig.TYPES.GOLD;
+        } else if (random >= 98) {
+            tileData = tileConfig.TYPES.DIAMOND;
         }
     }
 

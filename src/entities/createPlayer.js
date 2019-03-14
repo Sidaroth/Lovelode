@@ -25,7 +25,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     let cargoUsage = 0;
     const fuelCapacity = 100;
     const currentFuel = 100;
-    const thrustForce = 1;
+    const thrustForce = 0.4;
     const damageThresholdOnCrash = 10;
     const drillSpeed = 1;
     const inventory = [];
@@ -161,7 +161,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
             hullMax,
             hullCurrent,
             cargoCapacity,
-            currentCargoWeight: cargoUsage,
+            cargoUsage,
             fuelCapacity,
             currentFuel,
             inventory,

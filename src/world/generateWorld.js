@@ -18,10 +18,13 @@ const generateWorld = function generateWorldFunc(scene) {
                 y: (y * tileConfig.DATA.tileHeight + yOffset) * tileConfig.DATA.tileScale,
             };
 
+            let tile = null;
             const tileData = generateTileData(x, y);
-            const tile = createTile(scene, tileData);
-            tile.getSprite().setScale(tileConfig.DATA.tileScale);
-            tile.setPosition(pos);
+            if (tileData) {
+                tile = createTile(scene, tileData);
+                tile.getSprite().setScale(tileConfig.DATA.tileScale);
+                tile.setPosition(pos);
+            }
 
             world.push(tile);
         }

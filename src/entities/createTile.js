@@ -17,6 +17,7 @@ const createTile = function createTileFunc(scene, tileData) {
     const state = {};
 
     const tileType = tileData.TYPE;
+    const tileKey = tileData.IGNOREBG ? tileData.KEY : `${tileConfig.DATA.bgType}/${tileData.KEY}`;
     const hasLoot = tileData.LOOT;
     const isDrillable = tileData.DRILLABLE;
     const weight = tileData.WEIGHT;
@@ -139,7 +140,7 @@ const createTile = function createTileFunc(scene, tileData) {
         hasSize: hasSize(state),
         canListen: canListen(state),
         canEmit: canEmit(state),
-        hasSprite: hasSprite(state, tileData.KEY),
+        hasSprite: hasSprite(state, tileKey),
         hasMatterPhysics: hasMatterPhysics(state),
     });
 };
