@@ -30,6 +30,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const drillSpeed = 1;
     const inventory = [];
     const fuelConsumptionRate = 1.2;
+    const idleFuelConsumptionRate = 0.2;
 
     const money = 1500;
 
@@ -126,6 +127,8 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         drillTarget = null;
     }
 
+    // TODO: This way of calculating fuel consumption results in double fuel consumption when moving diagonally (i.e up-right)
+    // Depending on philosophy this could be fine, maybe it requires more thrusters to be active to go up and sideways at the same time, but maybe not...
     function move(direction, forceVector, frameDelta, texture, flipX) {
         const fuelConsumption = fuelConsumptionRate * frameDelta;
         currentFuel -= fuelConsumption;
@@ -208,6 +211,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
 
     // TODO: cancel drilling if we move too far from the drillstart point.
     function update(time) {
+        currentFuel -= idleFuelConsumptionRate * time.delta / 1000;
         damageTakenThisFrame = false;
         return time;
     }
@@ -242,7 +246,7 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         state.setCollidesWith([gameConfig.COLLISION.tiles, gameConfig.COLLISION.default]);
         state.setPosition({
             x: (gameConfig.WORLD.tilesInWidth * tileConfig.DATA.tileWidth) / 2,
-            y: (gameConfig.WORLD.tilesInHeight * tileConfig.DATA.tileHeight) / 2 - tileConfig.DATA.tileHeight * 10,
+            y: (gameConfig.WORLD.tilesInHeight * tileConfig.DATA.tileHeight) / 2 - tileConfig.DATA.tileHeight * 5,
         });
         state.setStatic(false);
         state.setFixedRotation(true);

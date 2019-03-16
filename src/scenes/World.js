@@ -8,6 +8,8 @@ import canListen from 'components/events/canListen';
 import tileConfig from 'configs/tileConfig';
 import createGasStation from 'entities/createGasStation';
 import createStore from 'entities/createStore';
+import createUpgradeShop from 'entities/createUpgradeShop';
+import createGarage from 'entities/createGarage';
 
 /**
  * The game world (i.e level 1)
@@ -43,7 +45,8 @@ const World = function WorldFunc() {
     }
 
     function createBuildings() {
-        const buildingScale = 2;
+        // TODO beautify.
+        const buildingScale = 1.75;
         const gasStation = createGasStation(state.getScene());
         gasStation.setScale(buildingScale);
 
@@ -56,10 +59,26 @@ const World = function WorldFunc() {
         const store = createStore(state.getScene());
         store.setScale(buildingScale);
         const storePos = {
-            x: (store.getSprite().width / 2) * buildingScale + 700,
+            x: (store.getSprite().width / 2) * buildingScale + (150 + 250 * buildingScale),
             y: surfaceOffset - (store.getSprite().height / 2) * buildingScale,
         };
         store.setPosition(storePos);
+
+        const upgradeShop = createUpgradeShop(state.getScene());
+        upgradeShop.setScale(buildingScale);
+        const shopPos = {
+            x: (upgradeShop.getSprite().width / 2) * buildingScale + (150 + 500 * buildingScale),
+            y: surfaceOffset - (upgradeShop.getSprite().height / 2) * buildingScale,
+        };
+        upgradeShop.setPosition(shopPos);
+
+        const garage = createGarage(state.getScene());
+        garage.setScale(buildingScale);
+        const garagePos = {
+            x: (garage.getSprite().width / 2) * buildingScale + (150 + 750 * buildingScale),
+            y: surfaceOffset - (garage.getSprite().height / 2) * buildingScale,
+        };
+        garage.setPosition(garagePos);
     }
 
     function create() {
