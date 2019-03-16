@@ -6,6 +6,8 @@ import canEmit from 'components/events/canEmit';
 import eventConfig from 'configs/eventConfig';
 import canListen from 'components/events/canListen';
 import tileConfig from 'configs/tileConfig';
+import createGasStation from 'entities/createGasStation';
+import createStore from 'entities/createStore';
 
 /**
  * The game world (i.e level 1)
@@ -13,6 +15,7 @@ import tileConfig from 'configs/tileConfig';
 const World = function WorldFunc() {
     const state = {};
     let tileMap;
+    let surfaceOffset;
 
     const worldBounds = {
         x: 0,
@@ -39,11 +42,31 @@ const World = function WorldFunc() {
         }
     }
 
+    function createBuildings() {
+        const buildingScale = 2;
+        const gasStation = createGasStation(state.getScene());
+        gasStation.setScale(buildingScale);
+
+        const gasPos = {
+            x: (gasStation.getSprite().width / 2) * buildingScale + 150,
+            y: surfaceOffset - (gasStation.getSprite().height / 2) * buildingScale,
+        };
+        gasStation.setPosition(gasPos);
+
+        const store = createStore(state.getScene());
+        store.setScale(buildingScale);
+        const storePos = {
+            x: (store.getSprite().width / 2) * buildingScale + 700,
+            y: surfaceOffset - (store.getSprite().height / 2) * buildingScale,
+        };
+        store.setPosition(storePos);
+    }
+
     function create() {
         tileMap = generateWorld(state.getScene());
 
         // Set level bounds.
-        const surfaceOffset = tileConfig.DATA.tileHeight * tileConfig.DATA.tileScale * 10; // how many tileHeights from the top (0, 0) do we want to move them.
+        surfaceOffset = tileConfig.DATA.tileHeight * tileConfig.DATA.tileScale * 10; // how many tileHeights from the top (0, 0) do we want to move them.
         const skyLimit = -surfaceOffset; // how much higher do we want to be able to fly.
         const boundWidth = tileConfig.DATA.tileWidth * tileConfig.DATA.tileScale * gameConfig.WORLD.tilesInWidth;
         const boundHeight =
@@ -59,6 +82,8 @@ const World = function WorldFunc() {
         cameraSetup();
 
         state.listenGlobal(eventConfig.DRILLING.FINISHED, onDrillingFinished);
+
+        createBuildings();
     }
 
     function update(time) {

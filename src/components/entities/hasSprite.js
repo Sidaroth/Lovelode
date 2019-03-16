@@ -7,7 +7,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
     let sprite;
     let key = tileKey;
 
-    function __constructor() {
+    function __init() {
         state.createSprite(key);
     }
 
@@ -34,6 +34,10 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
 
     function getKey() {
         return key;
+    }
+
+    function setScale(sx, sy = sx) {
+        sprite.setScale(sx, sy);
     }
 
     function setFlipX(value) {
@@ -76,7 +80,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
     }
 
     return {
-        __constructor,
+        __init,
         createSprite,
         getKey,
         setKey,
@@ -84,6 +88,7 @@ const hasSprite = function hasSpriteFunc(state, tileKey) {
         getSprite,
         setTexture,
         setPosition,
+        setScale,
         destroy,
         update,
     };

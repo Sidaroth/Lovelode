@@ -5,6 +5,8 @@ const prefix = `${gameConfig.GAME.TITLE.replace(/ /g, '_')}_Event_`; // i.e Love
 export default {
     GAME: {
         STARTED: `${prefix}game started`,
+        PLAYER_DEATH: `${prefix}player died`,
+        PLAYER_NOFUEL: `${prefix}player no fuel`,
     },
     KEYBOARD: {
         KEYDOWN: `${prefix}keydown`,

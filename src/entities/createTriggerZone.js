@@ -37,7 +37,7 @@ const createTriggerZone = function createTriggerZoneFunc(parent) {
 
     function drawDebugZone() {}
 
-    function __constructor() {
+    function __init() {
         triggerZone = state.getParentScene().matter.add.rectangle(0, 0, 100, 100);
     }
 
@@ -78,7 +78,7 @@ const createTriggerZone = function createTriggerZoneFunc(parent) {
     const localState = {
         // props
         // methods
-        __constructor,
+        __init,
         setSize,
         setPosition,
         setOverlaps,

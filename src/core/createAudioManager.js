@@ -80,7 +80,7 @@ const createAudioManager = function createAudioManagerFunc(scene) {
         state.listenGlobal(eventConfig.SOUND.PAUSEONBLUR, _togglePauseOnBlur);
     }
 
-    function __constructor() {
+    function __init() {
         _setupListeners();
         _updateMute();
         state.setPauseOnBlur(true);
@@ -133,7 +133,7 @@ const createAudioManager = function createAudioManagerFunc(scene) {
     const localState = {
         // props
         // methods
-        __constructor,
+        __init,
         setPauseOnBlur,
         getAudioContext,
         getCurrentSong,

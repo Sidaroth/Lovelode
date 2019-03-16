@@ -112,11 +112,11 @@ const createUI = function createUIFunc() {
         moneyText.x = moneyBackground.x - moneyText.width / 2 + iconOffset;
         moneyText.y = moneyBackground.y - moneyText.height / 2 + yOffset;
 
-        fuelText.setText(`${stats.currentFuel}/${stats.fuelCapacity}`);
+        fuelText.setText(`${stats.currentFuel.toFixed(1)}/${stats.fuelCapacity}`);
         fuelText.x = fuelBackground.x - fuelText.width / 2 + iconOffset;
         fuelText.y = fuelBackground.y - fuelText.height / 2 + yOffset;
 
-        hullText.setText(`${stats.hullCurrent}/${stats.hullMax}`);
+        hullText.setText(`${stats.hullCurrent.toFixed(1)}/${stats.hullMax}`);
         hullText.x = hullBackground.x - hullText.width / 2 + iconOffset;
         hullText.y = hullBackground.y - hullText.height / 2 + yOffset;
 

@@ -1,6 +1,6 @@
-const hasParentScene = function hasParentSceneFunc(state, sc) {
-    if (!sc) throw new Error('Missing parent scene');
-    let scene = sc;
+const hasParentScene = function hasParentSceneFunc(state, parentScene) {
+    if (!parentScene) throw new Error('Missing parent scene');
+    let scene = parentScene;
 
     function setParentScene(parent) {
         scene = parent;

@@ -24,13 +24,14 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     const cargoCapacity = 100;
     let cargoUsage = 0;
     const fuelCapacity = 100;
-    const currentFuel = 100;
+    let currentFuel = 100;
     const thrustForce = 0.4;
     const damageThresholdOnCrash = 10;
     const drillSpeed = 1;
     const inventory = [];
+    const fuelConsumptionRate = 1.2;
 
-    const money = 123456789;
+    const money = 1500;
 
     let damageTakenThisFrame = false; // because we can collide with multiple tiles simultaneously, we don't want to multiply the damage taken.
     let drillDirection;
@@ -125,34 +126,46 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
         drillTarget = null;
     }
 
+    function move(direction, forceVector, frameDelta, texture, flipX) {
+        const fuelConsumption = fuelConsumptionRate * frameDelta;
+        currentFuel -= fuelConsumption;
+
+        if (currentFuel <= 0) {
+            console.log('Oops you ran out of fuel!');
+            state.emit(eventConfig.GAME.PLAYER_NOFUEL, state.id);
+            currentFuel = fuelCapacity;
+        }
+
+        state.setTexture(texture);
+        if (flipX != null) state.setFlipX(flipX); // When moving horizontally we flipX to mirror the sprite.
+
+        state.applyForce(forceVector);
+        drill(direction);
+    }
+
     function _onMovement(data) {
         const { delta, direction } = data;
         const frameDelta = delta / 1000;
         const gravity = state.getParentScene().matter.world.localWorld.gravity.y;
 
         if (direction[gameConfig.DIRECTIONS.RIGHT]) {
-            state.applyForce({ x: thrustForce * frameDelta, y: 0 });
-            state.setTexture('SideDriveDig/digger_side_drivedig00.png');
-            state.setFlipX(false);
-            drill(gameConfig.DIRECTIONS.RIGHT);
+            const force = { x: thrustForce * frameDelta, y: 0 };
+            move(gameConfig.DIRECTIONS.RIGHT, force, frameDelta, 'SideDriveDig/digger_side_drivedig00.png', false);
         }
 
         if (direction[gameConfig.DIRECTIONS.LEFT]) {
-            state.applyForce({ x: -thrustForce * frameDelta, y: 0 });
-            state.setTexture('SideDriveDig/digger_side_drivedig00.png');
-            state.setFlipX(true);
-            drill(gameConfig.DIRECTIONS.LEFT);
+            const force = { x: -thrustForce * frameDelta, y: 0 };
+            move(gameConfig.DIRECTIONS.LEFT, force, frameDelta, 'SideDriveDig/digger_side_drivedig00.png', true);
         }
 
         if (direction[gameConfig.DIRECTIONS.UP]) {
-            state.applyForce({ y: (-thrustForce - gravity / 2) * frameDelta, x: 0 });
-            drill(gameConfig.DIRECTIONS.UP);
+            const force = { y: (-thrustForce - gravity / 2) * frameDelta, x: 0 };
+            move(gameConfig.DIRECTIONS.UP, force, frameDelta, 'Drivedig/digger_drivedig00.png');
         }
 
         if (direction[gameConfig.DIRECTIONS.DOWN]) {
-            state.applyForce({ y: thrustForce * frameDelta, x: 0 });
-            state.setTexture('Drivedig/digger_drivedig00.png');
-            drill(gameConfig.DIRECTIONS.DOWN);
+            const force = { y: thrustForce * frameDelta, x: 0 };
+            move(gameConfig.DIRECTIONS.DOWN, force, frameDelta, 'Drivedig/digger_drivedig00.png');
         }
     }
 
@@ -170,9 +183,16 @@ const createPlayer = function createPlayerFunc(scene, tileKey) {
     }
 
     function damage(value) {
-        console.log('Ouch!', value);
         damageTakenThisFrame = true;
         hullCurrent += value;
+
+        if (hullCurrent <= 0) {
+            console.log('Oops you died.');
+            state.emit(eventConfig.GAME.PLYER_DEATH, state.id);
+
+            // TODO: Add some death logic.
+            hullCurrent = hullMax;
+        }
     }
 
     function onCollisionStart(event) {
