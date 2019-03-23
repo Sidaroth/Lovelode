@@ -19,6 +19,8 @@ const World = function WorldFunc() {
     let tileMap;
     let surfaceOffset;
 
+    let gasStation;
+
     const worldBounds = {
         x: 0,
         y: 0,
@@ -47,7 +49,7 @@ const World = function WorldFunc() {
     function createBuildings() {
         // TODO beautify.
         const buildingScale = 1.75;
-        const gasStation = createGasStation(state.getScene());
+        gasStation = createGasStation(state.getScene());
         gasStation.setScale(buildingScale);
 
         const gasPos = {
@@ -112,6 +114,9 @@ const World = function WorldFunc() {
                 tile.update(time);
             }
         }
+
+        gasStation.update();
+        // update other buildings for their interaction zones.
     }
 
     const localState = {

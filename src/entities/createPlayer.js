@@ -15,8 +15,9 @@ import keybindings from 'configs/keybindings';
 import tileConfig from 'configs/tileConfig';
 import createOre from './createOre';
 
-const createPlayer = function createPlayerFunc(scene, tileKey) {
+const createPlayer = function createPlayerFunc(scene) {
     const state = {};
+    const tileKey = 'SideDriveDig/digger_side_drivedig00.png';
 
     // private
     const hullMax = 100;

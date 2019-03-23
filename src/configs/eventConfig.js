@@ -7,6 +7,7 @@ export default {
         STARTED: `${prefix}game started`,
         PLAYER_DEATH: `${prefix}player died`,
         PLAYER_NOFUEL: `${prefix}player no fuel`,
+        PLAYER_ADDED: `${prefix}player added`,
     },
     KEYBOARD: {
         KEYDOWN: `${prefix}keydown`,
@@ -29,5 +30,9 @@ export default {
         START: `${prefix}drillingStart`,
         FINISHED: `${prefix}drillingFinished`,
         CANCEL: `${prefix}drillingCanceled`,
+    },
+    TRIGGER: {
+        ENTER: `${prefix}triggerEnter`,
+        EXIT: `${prefix}triggerExit`,
     },
 };

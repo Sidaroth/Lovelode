@@ -7,6 +7,8 @@ import createPlayer from 'entities/createPlayer';
 import store from '../store';
 import isScene from '../components/isScene';
 import createState from 'utils/createState';
+import eventConfig from 'configs/eventConfig';
+import canEmit from 'components/events/canEmit';
 
 /**
  * Responsible for delegating the various levels, holding the various core systems and such.
@@ -29,7 +31,9 @@ const Game = function GameFunc() {
     }
 
     function create() {
-        store.players.push(createPlayer(worldScene.getScene(), 'SideDriveDig/digger_side_drivedig00.png'));
+        const player = createPlayer(worldScene.getScene());
+        state.emitGlobal(eventConfig.GAME.PLAYER_ADDED, player);
+        store.players.push(player);
         worldScene.getScene().cameras.main.startFollow(store.players[0].getSprite(), true, 0.5, 0.5);
         [window.player] = store.players;
     }
@@ -54,6 +58,7 @@ const Game = function GameFunc() {
     return createState('Game', state, {
         localState,
         canListen: canListen(state),
+        canEmit: canEmit(state),
         isScene: isScene(state, gameConfig.SCENES.GAME),
     });
 };

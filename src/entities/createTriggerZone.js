@@ -1,74 +1,91 @@
-import Phaser from 'phaser';
 import hasPosition from 'components/hasPosition';
 import hasSize from 'components/hasSize';
 import isGameEntity from 'components/entities/isGameEntity';
 import createState from 'utils/createState';
 import hasParentScene from 'components/hasParentScene';
+import canEmit from 'components/events/canEmit';
+import Matter from 'matter-js';
+import eventConfig from 'configs/eventConfig';
+import Phaser from 'phaser';
 
-const createTriggerZone = function createTriggerZoneFunc(parent) {
+/**
+ * Requires Matter.js bodies.
+ */
+const createTriggerZone = function createTriggerZoneFunc(parent, startX = 0, startY = 0, startW = 10, startH = 10) {
     const state = {};
-
+    let overlappedBodies = [];
+    let overlapsWith = [];
     let triggerZone;
-    const overlapsWith = [];
-    const overlappedEntities = [];
+    let x = startX;
+    let y = startY;
+    let w = startW;
+    let h = startH;
+
+    let debugGfx;
+    let debugZone;
+
+    function updateRects() {
+        triggerZone = Matter.Bodies.rectangle(x, y, w, h);
+        debugZone = new Phaser.Geom.Rectangle(x, y, w, h);
+    }
 
     function setSize(size) {
-        triggerZone.setSize(size.w, size.h);
+        ({ w, h } = size);
+        updateRects();
         return size;
     }
 
     function setPosition(pos) {
-        triggerZone.setPosition(pos.x, pos.y);
+        ({ x, y } = pos);
+        updateRects();
         return pos;
     }
 
-    // function setOverlaps(bodies) {
-    //     overlapsWith.length = 0;
-    //     overlapsWith.splice(0, 0, bodies);
-    // }
+    function setOverlaps(bodies) {
+        overlapsWith = bodies;
+    }
 
-    // function addOverlapBody(body) {
-    //     overlapsWith.push(body);
-    // }
+    function addOverlapBody(body) {
+        overlapsWith.push(body);
+    }
 
-    // function isOverlappedByAny() {
-    //     return overlappedEntities.length > 0;
-    // }
+    function isOverlappedByAny() {
+        return overlappedBodies.length > 0;
+    }
 
-    function drawDebugZone() {}
+    function drawDebugZone() {
+        debugGfx.fillStyle(0xff00ff, 0.3);
+        debugGfx.fillRectShape(debugZone);
+    }
 
     function __init() {
-        triggerZone = state.getParentScene().matter.add.rectangle(0, 0, 100, 100);
+        debugGfx = state.getParentScene().add.graphics();
+        updateRects();
     }
 
     function update(time) {
         drawDebugZone();
 
-        const previous = overlappedEntities;
-        overlappedEntities.length = 0;
+        const previous = overlappedBodies;
+        overlappedBodies = [];
 
-        // state.getParentScene().physics.overlap(triggerZone, overlapsWith, (zone, entity) => {
-        //     overlappedEntities.push(entity);
-        // });
-
-        console.log(state.getParentScene().matter);
-
-        // overlapsWith.forEach((entity) => {
-        //     if (Phaser.Geom.Rectangle.intersection(triggerZone, entity)) {
-        //         overlappedEntities.push(entity);
-        //     }
-        // });
-
-        overlappedEntities.forEach((entity) => {
-            if (previous.indexOf(entity) === -1) {
-                state.onEntityEnteredRange(entity);
+        overlapsWith.forEach((body) => {
+            const collision = Matter.SAT.collides(triggerZone, body);
+            if (collision.collided) {
+                overlappedBodies.push(body);
             }
         });
 
-        // If an entity was overlapped previously, but no longer, we emit an exit event.
-        previous.forEach((entity) => {
-            if (overlappedEntities.indexOf(entity) === -1) {
-                state.onEntityLeftRange(entity);
+        overlappedBodies.forEach((body) => {
+            if (previous.indexOf(body) === -1) {
+                state.emit(eventConfig.TRIGGER.ENTER, body);
+            }
+        });
+
+        // If a body was overlapped previously, but no longer, we emit an exit event.
+        previous.forEach((body) => {
+            if (overlappedBodies.indexOf(body) === -1) {
+                state.emit(eventConfig.TRIGGER.EXIT, body);
             }
         });
 
@@ -85,14 +102,13 @@ const createTriggerZone = function createTriggerZoneFunc(parent) {
         addOverlapBody,
         isOverlappedByAny,
         update,
-        onEntityLeftRange: e => e,
-        onEntityEnteredRange: e => e,
     };
 
     return createState('createTriggerZone', state, {
         localState,
         isGameEntity: isGameEntity(state),
         hasPosition: hasPosition(state),
+        canEmit: canEmit(state),
         hasSize: hasSize(state),
         hasParentScene: hasParentScene(state, parent),
     });
