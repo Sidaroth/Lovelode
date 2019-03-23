@@ -4,8 +4,7 @@ import canListen from 'components/events/canListen';
 import canEmit from 'components/events/canEmit';
 import hasParentScene from 'components/hasParentScene';
 import hasPosition from 'components/hasPosition';
-import createTriggerZone from './createTriggerZone';
-import store from '../store';
+import hasTriggerZone from 'components/entities/hasTriggerZone';
 import eventConfig from 'configs/eventConfig';
 
 /**
@@ -13,47 +12,27 @@ import eventConfig from 'configs/eventConfig';
  */
 const createGasStation = function createGasStationFunc(scene) {
     const state = {};
-    let interactionZone;
 
-    function onInteractionEnter(e) {
-        console.log('enter', e);
+    function onInteractionEnter(entity) {
+        console.log('enter gas station');
     }
 
-    function onInteractionExit(e) {
-        console.log('exit', e);
+    function onInteractionExit(entity) {
+        console.log('exit gas station');
     }
 
     function __created() {
-        const {
-            x, y, width, height,
-        } = state.getSprite();
-
-        interactionZone = createTriggerZone(state.getParentScene(), x - width / 2, y, width, height);
-
-        state.listenOn(interactionZone, eventConfig.TRIGGER.ENTER, onInteractionEnter);
-        state.listenOn(interactionZone, eventConfig.TRIGGER.EXIT, onInteractionExit);
-        state.listenGlobal(eventConfig.GAME.PLAYER_ADDED, (player) => {
-            interactionZone.addOverlapBody(player.getSprite().body);
-        });
-    }
-
-    function setPosition(pos) {
-        interactionZone.setPosition(pos);
-        return pos;
-    }
-
-    function update() {
-        interactionZone.update();
+        state.listenOn(state, eventConfig.TRIGGER.ENTER, onInteractionEnter);
+        state.listenOn(state, eventConfig.TRIGGER.EXIT, onInteractionExit);
     }
 
     const localState = {
         __created,
-        update,
-        setPosition,
     };
 
     return createState('GasStation', state, {
         localState,
+        hasTriggerZone: hasTriggerZone(state),
         hasParentScene: hasParentScene(state, scene),
         hasPosition: hasPosition(state),
         hasSprite: hasSprite(state, 'building_gasstation.png'),

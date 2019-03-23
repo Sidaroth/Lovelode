@@ -31,6 +31,10 @@ export default {
         FINISHED: `${prefix}drillingFinished`,
         CANCEL: `${prefix}drillingCanceled`,
     },
+    INTERNAL_TRIGGER: {
+        ENTER: `${prefix}internal_triggerEnter`,
+        EXIT: `${prefix}internal_triggerExit`,
+    },
     TRIGGER: {
         ENTER: `${prefix}triggerEnter`,
         EXIT: `${prefix}triggerExit`,

@@ -46,6 +46,7 @@ const createUI = function createUIFunc() {
         volume: 70,
         pauseOnBlur: true,
         showFPS: false,
+        showTriggers: false,
     };
 
     const onPreUpdate = () => {
@@ -97,6 +98,10 @@ const createUI = function createUIFunc() {
             } else {
                 hidePerformanceStats();
             }
+        });
+
+        gui.add(guiData, 'showTriggers').onChange((val) => {
+            store.showTriggers = val;
         });
     }
 

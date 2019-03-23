@@ -7,6 +7,7 @@ import canEmit from 'components/events/canEmit';
 import Matter from 'matter-js';
 import eventConfig from 'configs/eventConfig';
 import Phaser from 'phaser';
+import store from 'root/store';
 
 /**
  * Requires Matter.js bodies.
@@ -26,7 +27,7 @@ const createTriggerZone = function createTriggerZoneFunc(parent, startX = 0, sta
 
     function updateRects() {
         triggerZone = Matter.Bodies.rectangle(x, y, w, h);
-        debugZone = new Phaser.Geom.Rectangle(x, y, w, h);
+        debugZone = new Phaser.Geom.Rectangle(x - w / 2, y - h / 2, w, h);
     }
 
     function setSize(size) {
@@ -64,7 +65,10 @@ const createTriggerZone = function createTriggerZoneFunc(parent, startX = 0, sta
     }
 
     function update(time) {
-        drawDebugZone();
+        debugGfx.clear();
+        if (store.showTriggers) {
+            drawDebugZone();
+        }
 
         const previous = overlappedBodies;
         overlappedBodies = [];
@@ -78,14 +82,14 @@ const createTriggerZone = function createTriggerZoneFunc(parent, startX = 0, sta
 
         overlappedBodies.forEach((body) => {
             if (previous.indexOf(body) === -1) {
-                state.emit(eventConfig.TRIGGER.ENTER, body);
+                state.emit(eventConfig.INTERNAL_TRIGGER.ENTER, body);
             }
         });
 
         // If a body was overlapped previously, but no longer, we emit an exit event.
         previous.forEach((body) => {
             if (overlappedBodies.indexOf(body) === -1) {
-                state.emit(eventConfig.TRIGGER.EXIT, body);
+                state.emit(eventConfig.INTERNAL_TRIGGER.EXIT, body);
             }
         });
 
@@ -102,6 +106,7 @@ const createTriggerZone = function createTriggerZoneFunc(parent, startX = 0, sta
         addOverlapBody,
         isOverlappedByAny,
         update,
+        drawDebugZone,
     };
 
     return createState('createTriggerZone', state, {

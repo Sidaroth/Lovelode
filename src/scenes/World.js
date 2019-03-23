@@ -20,6 +20,9 @@ const World = function WorldFunc() {
     let surfaceOffset;
 
     let gasStation;
+    let store;
+    let upgradeShop;
+    let garage;
 
     const worldBounds = {
         x: 0,
@@ -58,7 +61,7 @@ const World = function WorldFunc() {
         };
         gasStation.setPosition(gasPos);
 
-        const store = createStore(state.getScene());
+        store = createStore(state.getScene());
         store.setScale(buildingScale);
         const storePos = {
             x: (store.getSprite().width / 2) * buildingScale + (150 + 250 * buildingScale),
@@ -66,7 +69,7 @@ const World = function WorldFunc() {
         };
         store.setPosition(storePos);
 
-        const upgradeShop = createUpgradeShop(state.getScene());
+        upgradeShop = createUpgradeShop(state.getScene());
         upgradeShop.setScale(buildingScale);
         const shopPos = {
             x: (upgradeShop.getSprite().width / 2) * buildingScale + (150 + 500 * buildingScale),
@@ -74,7 +77,7 @@ const World = function WorldFunc() {
         };
         upgradeShop.setPosition(shopPos);
 
-        const garage = createGarage(state.getScene());
+        garage = createGarage(state.getScene());
         garage.setScale(buildingScale);
         const garagePos = {
             x: (garage.getSprite().width / 2) * buildingScale + (150 + 750 * buildingScale),
@@ -108,6 +111,7 @@ const World = function WorldFunc() {
     }
 
     function update(time) {
+        // Tiles need update for drilling purposes. They keep an internal timer etc.
         for (let i = 0; i < tileMap.length; i += 1) {
             const tile = tileMap[i];
             if (tile) {
@@ -115,8 +119,11 @@ const World = function WorldFunc() {
             }
         }
 
+        // update buildings for their interaction zones.
         gasStation.update();
-        // update other buildings for their interaction zones.
+        store.update();
+        garage.update();
+        upgradeShop.update();
     }
 
     const localState = {
